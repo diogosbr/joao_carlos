@@ -12,7 +12,9 @@
 #Caso você queira o conteúdo completo dessas pastas, favor entrar em contato comigo (pedro.eisenlohr@unemat.br).
 
 
-setwd(choose.dir()) #Defina a pasta Habitat Suitability Models
+#setwd(choose.dir()) #Defina a pasta Habitat Suitability Models
+dir.create("Habitat Suitability Models")
+setwd("./Habitat Suitability Models")
 getwd()
 dir() #Dentre as pastas, DEVE haver "Environmental Layers" e "Shapefiles"
 
@@ -61,25 +63,28 @@ library(sdmvspecies)
 
 ### Sempre que necessário:
 # Processamento paralelo
-#cl <- makeCluster(detectCores()) # number of cores in computer
-#registerDoParallel(cl)
-#getDoParWorkers()
+
+detectCores()
+getDoParWorkers()
+cl <- parallel::makeCluster(2, outfile="./joao.log")
+registerDoParallel(cl)
+getDoParWorkers()
 
 # Aumento da alocação de memória
 memory.limit(10000000) # ou algum outro valor de memória (em kB)
 
 
-## create the directory (somente ao iniciar a modelagem):
-dir.create(raster_tmp_dir, showWarnings = F, recursive = T)
-
 ##MUDAR DIRETÓRIO DE ARQUIVOS TEMPORÁRIOS DO raster
 ## define the name of a temp directory where raster tmp files will be stored
 raster_tmp_dir <- "raster_tmp"
+
+## create the directory (somente ao iniciar a modelagem):
+dir.create(raster_tmp_dir, showWarnings = F, recursive = T)
+
 ## set raster options
 rasterOptions(tmpdir = raster_tmp_dir)
 #Caso o PC desligue sem que você tenha concluído a modelagem,
 #dê o comando acima antes de retomar a rotina.
-
 
 
 ####################################
@@ -87,7 +92,8 @@ rasterOptions(tmpdir = raster_tmp_dir)
 ####################################
 
 # Importando dados climáticos do presente
-bio.crop <- list.files("./Environmental layers/CHELSA", full.names=TRUE, pattern=".grd")
+bio.crop <- list.files("C:/Users/JBRJ/Documents/MEGA/Alunos/joao/env/Chelsa", full.names=TRUE, pattern=".grd")
+#bio.crop <- list.files("./Environmental layers/CHELSA", full.names=TRUE, pattern=".grd")
 bio.crop
 bio.crop <- stack(bio.crop)
 bio.crop
@@ -95,45 +101,59 @@ names(bio.crop)
 res(bio.crop)
 
 # Shapefiles
-neotrop <- readOGR("./Shapefiles/ShapeNeo/neotropic.shp")
-domains <- readOGR("./Shapefiles/Shape_Dominios/Dominio_AbSaber.shp")
+neotrop <- readOGR("../Shapefiles/ShapeNeo/neotropic.shp")
+domains <- readOGR("../Shapefiles/Shape_Dominios/Dominio_AbSaber.shp")
 
 # Padronizando a escala das variáveis climáticas (0-1)
 bio.crop <- rescale(bio.crop)
 
 # Checando bio.crop
-bio.crop 
-names(bio.crop)#Observe atentamente esta sequência!
-names(bio.crop)=c("bio01","bio02","bio03","bio04","bio05","bio06","bio07",
-			"bio08","bio09","bio10","bio11","bio12","bio13","bio14",
-			"bio15","bio16","bio17","bio18","bio19")
+# bio.crop 
+# names(bio.crop)#Observe atentamente esta sequência!
+# names(bio.crop)=c("bio01","bio02","bio03","bio04","bio05","bio06","bio07",
+# 			"bio08","bio09","bio10","bio11","bio12","bio13","bio14",
+# 			"bio15","bio16","bio17","bio18","bio19")
 ###Confira atentamente se a sequência "bate" com bio.crop
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(bio.crop)
 
 # Importando dados bióticos
-spp<-read.table(file.choose(),row.names=1,header=T,sep=",")
+
+#spp<-read.table(file.choose(), header=T, sep=";")
+spp<-read.table("registros_teste.csv", header=T, sep=";")
 dim(spp)
 edit(spp)
+head(spp,10)
+
+table(spp$sp)
+
+especies <- unique(spp$sp)
+especies
 
 # Diagnosticando possíveis problemas com a matriz biótica:
-csum <- colSums(spp) 
-any(is.na(csum)) 
+#csum <- colSums(spp[,2:3]) 
+#any(is.na(csum)) 
 ### Se aparecer [FALSE], está tudo certo. Se não, siga os dois passos abaixo.
 #which(is.na(csum)) 
 #summary(spp[, c("x")]) # substitua 'x' pelo nome da coluna
 
+#início do loop
+for(especie in especies){}
+
+#criuando tabela parauma especie
+occs <- spp[spp$sp == especie, c("lon", "lat")]
+
 # Selecionado pontos espacialmente únicos #
 mask <- bio.crop[[1]]
-cell <- cellFromXY(mask, spp[,1:2]) # get the cell number for each point
-dup <- duplicated(cbind(spp[,1:2],cell))
-spp <- spp[!dup, ]# select the records that are not duplicated
-dim(spp)
+cell <- cellFromXY(mask, occs[,1:2]) # get the cell number for each point
+dup <- duplicated(cbind(occs[,1:2],cell))
+spp <- occs[!dup, ]# select the records that are not duplicated
+dim(occs)
 
 # Visualindo os dados de ocorrência da espécie no mapa #Dê os 3 comandos de uma vez
-data(wrld_simpl)
-plot(wrld_simpl, xlim=c(-85, -35), ylim=c(-55, 50), col="lightgray", axes=TRUE)
-points(spp$long, spp$lat, col="black", bg="red", pch=21, cex=1.5, lwd=1.5)
+# data(wrld_simpl)
+# plot(wrld_simpl, xlim=c(-85, -35), ylim=c(-55, 50), col="lightgray", axes=TRUE)
+# points(spp$lon, spp$lat, col="black", bg="red", pch=21, cex=1.5, lwd=1.5)
 
 
 #####################################################
@@ -141,14 +161,14 @@ points(spp$long, spp$lat, col="black", bg="red", pch=21, cex=1.5, lwd=1.5)
 #####################################################
 
 # Obtendo os dados climáticos para os pontos de ocorrência
-presvals <- extract(bio.crop, spp)
+presvals <- extract(bio.crop, occs)
 
 # PCA
 #pca <- PCA(presvals,graph=FALSE)
 #plot(pca, choix="var")
 
 # Detectando e removendo colinearidades
-v1 <- vifcor(presvals, th=0.8)
+v1 <- vifcor(presvals, th=0.6)
 v1
 ### Confira se nenhuma variável apresenta VIF>10
 # Se alguma variável apresentar VIF>10, reduza o 'th' acima e confira o VIF novamente.
@@ -165,7 +185,7 @@ names(bio.crop2)
 ####################################################
 
 # Selecionando 10000 pontos aleatórios ao longo do Neotrópico
-mask <- bio.crop$bio01 
+mask <- bio.crop[[1]]
 rnd.points <- randomPoints(mask, 10000)
 #plot(!is.na(mask), legend = F)#Dê este comando juntamente com o próximo.
 #points(rnd.points, cex = 0.5)
@@ -191,16 +211,16 @@ names(env.selected)
 ################################################
 
 # Convert dataset to SpatialPointsDataFrame (only presences)
-myRespXY <- spp[,c("long","lat")] #Caso dê algum erro aqui, veja como você intitulou as colunas da sua matriz.
+myRespXY <- occs[,c("lon","lat")] #Caso dê algum erro aqui, veja como você intitulou as colunas da sua matriz.
 # Creating occurrence data object
-occurrence.resp <-  rep(1, length(myRespXY$long))
+occurrence.resp <-  rep(1, length(myRespXY$lon))
 
 
 ############################################
 ## FIT SPECIES DISTRIBUTION MODELS - SDMS ##
 ############################################
 
-dim(spp)
+dim(occs)
 PA.number <- length(spp[,1])
 PA.number #número de pontos de ocorrência espacialmente únicos
 
@@ -222,7 +242,7 @@ sppBiomodData.PA.10000 <- BIOMOD_FormatingData(
 	expl.var = env.selected,
 	resp.xy = myRespXY,
 	resp.name = "Occurrence",
-	PA.nb.rep = 10,
+	PA.nb.rep = 5,
 	PA.nb.absences = 1000,
 	PA.strategy = "disk")
 sppBiomodData.PA.10000
@@ -241,8 +261,6 @@ sppBiomodData.PA.10000
 #system.file("java", package = "dismo")
 
 myBiomodOption <- BIOMOD_ModelingOptions(MAXENT.Phillips = list(path_to_maxent.jar=paste0(system.file(package = "dismo"), "/java/maxent.jar")))
-
-
 
 
 #################
@@ -281,7 +299,7 @@ sppModelOut.PA.10000 <- BIOMOD_Modeling(
 sppModelOut.PA.10000
 
 
-save.image()
+#save.image()
 
 
 ###################################
@@ -663,11 +681,7 @@ projections.all.mean_bin2 <- BinaryTransformation(projections.all.mean, th_mean)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.all.mean_bin, filename="Ensemble - Current Climate - final binary.asc", format="ascii", overwrite=TRUE)
 
-
-
-save.image()
-
-
+#save.image()
 
 
 ###################################
