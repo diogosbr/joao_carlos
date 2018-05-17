@@ -13,7 +13,8 @@
 
 
 #setwd(choose.dir()) #Defina a pasta Habitat Suitability Models
-dir.create("Habitat Suitability Models")
+if(dir.exists("Habitat Suitability Models")==F){dir.create("Habitat Suitability Models")}
+
 setwd("./Habitat Suitability Models")
 getwd()
 dir() #Dentre as pastas, DEVE haver "Environmental Layers" e "Shapefiles"
@@ -74,12 +75,25 @@ getDoParWorkers()
 memory.limit(10000000) # ou algum outro valor de memória (em kB)
 
 
+#Baixar o Maxent (Apenas rode a funcao abaixo se você não tiver baixado o Maxent)
+MaxEnt .jar
+ jar <- paste0(system.file(package = "dismo"), "/java/maxent.jar")
+ if (file.exists(jar) != T) {
+   url = "http://biodiversityinformatics.amnh.org/open_source/maxent/maxent.php?op=download"
+   download.file(url, dest = "maxent.zip", mode = "wb")
+   unzip("maxent.zip", files = "maxent.jar", exdir = system.file("java", package = "dismo"))
+   unlink("maxent.zip")
+   warning("Maxent foi colocado no diretório")
+ }
+system.file("java", package = "dismo")
+
 ##MUDAR DIRETÓRIO DE ARQUIVOS TEMPORÁRIOS DO raster
 ## define the name of a temp directory where raster tmp files will be stored
 raster_tmp_dir <- "raster_tmp"
-
+if(dir.exists("raster_tmp")==F){
 ## create the directory (somente ao iniciar a modelagem):
 dir.create(raster_tmp_dir, showWarnings = F, recursive = T)
+}
 
 ## set raster options
 rasterOptions(tmpdir = raster_tmp_dir)
@@ -137,31 +151,12 @@ especies
 #which(is.na(csum)) 
 #summary(spp[, c("x")]) # substitua 'x' pelo nome da coluna
 
-#início do loop
-for(especie in especies){}
-
-#criuando tabela parauma especie
-occs <- spp[spp$sp == especie, c("lon", "lat")]
-
-# Selecionado pontos espacialmente únicos #
-mask <- bio.crop[[1]]
-cell <- cellFromXY(mask, occs[,1:2]) # get the cell number for each point
-dup <- duplicated(cbind(occs[,1:2],cell))
-spp <- occs[!dup, ]# select the records that are not duplicated
-dim(occs)
-
-# Visualindo os dados de ocorrência da espécie no mapa #Dê os 3 comandos de uma vez
-# data(wrld_simpl)
-# plot(wrld_simpl, xlim=c(-85, -35), ylim=c(-55, 50), col="lightgray", axes=TRUE)
-# points(spp$lon, spp$lat, col="black", bg="red", pch=21, cex=1.5, lwd=1.5)
-
-
 #####################################################
 ## PRIMEIRO PASSO DE VERIFICAÇÃO DE COLINEARIDADES ##
 #####################################################
 
 # Obtendo os dados climáticos para os pontos de ocorrência
-presvals <- extract(bio.crop, occs)
+presvals <- extract(bio.crop, spp[,-1])
 
 # PCA
 #pca <- PCA(presvals,graph=FALSE)
@@ -206,6 +201,30 @@ env.selected <- stack(env.selected)
 names(env.selected)
 
 
+
+
+#início do loop
+for(especie in especies){}
+
+#criando tabela para uma especie
+occs <- spp[spp$sp == especie, c("lon", "lat")]
+
+# Selecionado pontos espacialmente únicos #
+mask <- env.selected[[1]]
+cell <- cellFromXY(mask, occs[,1:2]) # get the cell number for each point
+dup <- duplicated(cbind(occs[,1:2],cell))
+spp <- occs[!dup, ]# select the records that are not duplicated
+dim(occs)
+
+# Visualindo os dados de ocorrência da espécie no mapa #Dê os 3 comandos de uma vez
+# data(wrld_simpl)
+# plot(wrld_simpl, xlim=c(-85, -35), ylim=c(-55, 50), col="lightgray", axes=TRUE)
+# points(spp$lon, spp$lat, col="black", bg="red", pch=21, cex=1.5, lwd=1.5)
+
+
+
+
+
 ################################################
 ## GENERATING OTHER REQUIRED OBJECTS FOR SDM ###
 ################################################
@@ -220,9 +239,25 @@ occurrence.resp <-  rep(1, length(myRespXY$lon))
 ## FIT SPECIES DISTRIBUTION MODELS - SDMS ##
 ############################################
 
+
+coord1 = occs
+sp::coordinates(coord1) <- ~lon + lat
+raster::crs(coord1) <- raster::crs(env.selected)
+
+dist.mean <- mean(sp::spDists(x = coord1,
+                               longlat = T,
+                               segments = FALSE))
+
+dist.min <-  min(sp::spDists(x = coord1,
+                               longlat = T,
+                               segments = F))
+
+
 dim(occs)
-PA.number <- length(spp[,1])
+PA.number <- length(occs[,1])
 PA.number #número de pontos de ocorrência espacialmente únicos
+
+
 
 #Preparando para CTA, GBM e RF:
 sppBiomodData.PA.equal <- BIOMOD_FormatingData(
@@ -232,7 +267,9 @@ sppBiomodData.PA.equal <- BIOMOD_FormatingData(
 	resp.name = "Occurrence",
 	PA.nb.rep = 1, #número de datasets de pseudoausências
 	PA.nb.absences = PA.number, #= número de pseudoausências = número de pontos espacialmente únicos
-	PA.strategy = "disk")
+	PA.strategy = "disk",
+	PA.dist.min = dist.min*1000,
+	PA.dist.max = dist.mean*1000)
 sppBiomodData.PA.equal
 
 
@@ -244,21 +281,10 @@ sppBiomodData.PA.10000 <- BIOMOD_FormatingData(
 	resp.name = "Occurrence",
 	PA.nb.rep = 5,
 	PA.nb.absences = 1000,
-	PA.strategy = "disk")
+	PA.strategy = "disk",
+	PA.dist.min = dist.min*1000,
+	PA.dist.max = dist.mean*1000)
 sppBiomodData.PA.10000
-
-
-#Baixar o Maxent (Apenas rode a funcao abaixo se você não tiver baixado o Maxent)
-# MaxEnt .jar
-#  jar <- paste0(system.file(package = "dismo"), "/java/maxent.jar")
-#  if (file.exists(jar) != T) {
-#    url = "http://biodiversityinformatics.amnh.org/open_source/maxent/maxent.php?op=download"
-#    download.file(url, dest = "maxent.zip", mode = "wb")
-#    unzip("maxent.zip", files = "maxent.jar", exdir = system.file("java", package = "dismo"))
-#    unlink("maxent.zip")
-#    warning("Maxent foi colocado no diretório")
-#  } 
-#system.file("java", package = "dismo")
 
 myBiomodOption <- BIOMOD_ModelingOptions(MAXENT.Phillips = list(path_to_maxent.jar=paste0(system.file(package = "dismo"), "/java/maxent.jar")))
 
@@ -313,6 +339,7 @@ sppModelOut.PA.10000
 # Avaliação dos Modelos
 sppModelEval.PA.equal <- get_evaluations(sppModelOut.PA.equal)#GBM, CTA e RF
 sppModelEval.PA.equal
+
 write.table(sppModelEval.PA.equal, "EvaluationsAll_1.csv")
 sppModelEval.PA.10000 <- get_evaluations(sppModelOut.PA.10000) #Os demais.
 sppModelEval.PA.10000
@@ -416,7 +443,7 @@ spp.projections_2 <- BIOMOD_Projection(
 	output.format = ".grd")
 
 
-save.image()
+#save.image()
 
 
 ### Definir diretório onde está o arquivo proj_Cur1_presente_Occurrence.grd
