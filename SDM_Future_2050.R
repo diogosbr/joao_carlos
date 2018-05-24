@@ -67,7 +67,7 @@ library(sdmvspecies)
 
 detectCores()
 getDoParWorkers()
-cl <- parallel::makeCluster(2, outfile="./joao.log")
+cl <- parallel::makeCluster(3, outfile="./joao.log")
 registerDoParallel(cl)
 getDoParWorkers()
 
@@ -76,7 +76,7 @@ memory.limit(10000000) # ou algum outro valor de memória (em kB)
 
 
 #Baixar o Maxent (Apenas rode a funcao abaixo se você não tiver baixado o Maxent)
-MaxEnt .jar
+#MaxEnt .jar
  jar <- paste0(system.file(package = "dismo"), "/java/maxent.jar")
  if (file.exists(jar) != T) {
    url = "http://biodiversityinformatics.amnh.org/open_source/maxent/maxent.php?op=download"
@@ -134,7 +134,7 @@ bio.crop <- rescale(bio.crop)
 # Importando dados bióticos
 
 #spp<-read.table(file.choose(), header=T, sep=";")
-spp<-read.table("registros_teste.csv", header=T, sep=";")
+spp<-read.table("../registros_teste.csv", header=T, sep=";")
 dim(spp)
 edit(spp)
 head(spp,10)
@@ -201,11 +201,9 @@ env.selected <- stack(env.selected)
 names(env.selected)
 
 
-
-
 #início do loop
-for(especie in especies){}
-
+#for(especie in especies){
+foreach(especie = especies, .packages = c("raster", "biomod2", 'sp')) %dopar% {
 #criando tabela para uma especie
 occs <- spp[spp$sp == especie, c("lon", "lat")]
 
@@ -293,6 +291,10 @@ myBiomodOption <- BIOMOD_ModelingOptions(MAXENT.Phillips = list(path_to_maxent.j
 ### Modelagem ###
 #################
 
+n.runs = 10
+n.algo.1 = 3
+n.algo.2 = 7
+
 # Com partição treino x teste:
 sppModelOut.PA.equal <- BIOMOD_Modeling(sppBiomodData.PA.equal, 
 	models = c("GBM", "CTA", "RF"), 
@@ -340,6 +342,7 @@ sppModelOut.PA.10000
 sppModelEval.PA.equal <- get_evaluations(sppModelOut.PA.equal)#GBM, CTA e RF
 sppModelEval.PA.equal
 
+
 write.table(sppModelEval.PA.equal, "EvaluationsAll_1.csv")
 sppModelEval.PA.10000 <- get_evaluations(sppModelOut.PA.10000) #Os demais.
 sppModelEval.PA.10000
@@ -349,21 +352,20 @@ write.table(sppModelEval.PA.10000, "EvaluationsAll_2.csv")
 # Sumarizando as métricas avaliativas
 sdm.models1 <- c("GBM","CTA","RF") #3 models
 sdm.models1
-eval.methods1 <- c("TSS","ROC") #2 evaluation methods
+eval.methods1 <- c("TSS", "ROC") #2 evaluation methods
 eval.methods1
 
+
 means.i <- numeric(0)
-means.j <- numeric(2)
-for (i in 1:3){
-	for (j in 1:2){
-	means.j[j] <- mean(sppModelEval.PA.equal[paste(eval.methods1[j]),"Testing.data",paste(sdm.models1[i]),,])
-	}
-	means.i <- c(means.i, means.j)
+for (i in 1:n.algo.1){
+   m1 <- sppModelEval.PA.equal[paste(eval.methods1[1]),"Testing.data",paste(sdm.models1[i]),,]
+   means.i = c(means.i,m1)
 }
 
-summary.eval.equal <- data.frame(rep(sdm.models1,each=2), rep(eval.methods1,3), means.i)
-names(summary.eval.equal) <- c("Model", "Method", "Mean")
+summary.eval.equal <- data.frame(rep(sdm.models1,each=n.runs), rep(1:n.runs,n.algo), means.i)
+names(summary.eval.equal) <- c("Model", "Run", "TSS")
 summary.eval.equal
+
 write.table(summary.eval.equal,"Models1_Evaluation_Mean.csv")
 
 sd.i <- numeric(0)
@@ -375,25 +377,22 @@ for (i in 1:3){
 	sd.i <- c(sd.i, sd.j)
 }
 
-summary.eval.equal <- data.frame(rep(sdm.models1,each=2), rep(eval.methods1,3), sd.i)
-names(summary.eval.equal) <- c("Model", "Method", "SD")
-summary.eval.equal
-write.table(summary.eval.equal,"Models1_Evaluation_SD.csv")
+summary.eval.equal.sd <- data.frame(rep(sdm.models1,each=2), rep(eval.methods1,3), sd.i)
+names(summary.eval.equal.sd) <- c("Model", "Method", "SD")
+summary.eval.equal.sd
+write.table(summary.eval.equal.sd,"Models1_Evaluation_SD.csv")
 
 
 
 sdm.models2 <- c("GLM","GAM","ANN","SRE","MARS","MAXENT.Phillips","FDA") #7 models
 sdm.models2
-eval.methods2 <- c("TSS","ROC") #2 evaluation methods
+eval.methods2 <- c("TSS", "ROC") #2 evaluation methods
 eval.methods2
 
 means.i <- numeric(0)
-means.j <- numeric(2)
-for (i in 1:7){
-	for (j in 1:2){
-	means.j[j] <- mean(sppModelEval.PA.10000[paste(eval.methods2[j]),"Testing.data",paste(sdm.models2[i]),,], na.rm=T)
-	}
-	means.i <- c(means.i, means.j)
+for (i in 1:n.algo.2){
+  m1 <- sppModelEval.PA.10000[paste(eval.methods2[1]),"Testing.data",paste(sdm.models2[i]),,]
+  means.i = c(means.i,m1)
 }
 
 summary.eval.10000 <- data.frame(rep(sdm.models2,each=2), rep(eval.methods2,7), means.i)
@@ -410,11 +409,10 @@ for (i in 1:7){
 	sd.i <- c(sd.i, sd.j)
 }
 
-summary.eval.10000 <- data.frame(rep(sdm.models2,each=2), rep(eval.methods2,7), sd.i)
-names(summary.eval.10000) <- c("Model", "Method", "SD")
-summary.eval.10000
-write.table(summary.eval.10000,"Models2_Evaluation_SD.csv")
-
+summary.eval.10000.sd <- data.frame(rep(sdm.models2,each=2), rep(eval.methods2,7), sd.i)
+names(summary.eval.10000.sd) <- c("Model", "Method", "SD")
+summary.eval.10000.sd
+write.table(summary.eval.10000.sd,"Models2_Evaluation_SD.csv")
 
 
 
@@ -443,68 +441,30 @@ spp.projections_2 <- BIOMOD_Projection(
 	output.format = ".grd")
 
 
-#save.image()
-
-
 ### Definir diretório onde está o arquivo proj_Cur1_presente_Occurrence.grd
 projections_1 <-stack("./Occurrence/proj_Cur1_presente/proj_Cur1_presente_Occurrence.grd")
 names(projections_1)
+
+summary.eval.equal = summary.eval.equal[order(summary.eval.equal$Run),] 
+summary.eval.equal$ID = 1:(n.runs*n.algo.1)
+
+sel=summary.eval.equal[summary.eval.equal[,"TSS"]>0.7,]
+sel
+
+projections_1 = subset(projections_1, sel[,"ID"] )
 
 ### Definir diretório onde está o arquivo proj_Cur2_presente_Occurrence.grd
 projections_2 <-stack("./Occurrence/proj_Cur2_presente/proj_Cur2_presente_Occurrence.grd")
 names(projections_2)
 
 
-### Modelos médios para cada algoritmo: #Só rodar para os algoritmos previamente selecionados
-projections.RF.all <- subset(projections_1, grep("RF", names(projections_1)))
-projections.RF.mean <- mean(projections.RF.all)/10
-#plot(projections.RF.mean, col = matlab.like(100), main = "RF - Current Climate", las = 1)
-writeRaster(projections.RF.mean, filename="Current Climate_RF.asc", formato="ascii")
+summary.eval.10000 = summary.eval.10000[order(summary.eval.1000$Run),] 
+summary.eval.1000$ID = 1:(n.runs*n.algo.1)
 
-projections.GBM.all <-subset(projections_1, grep("GBM", names(projections_1)))
-projections.GBM.mean <- mean(projections.GBM.all)/10
-#plot(projections.GBM.mean, col = matlab.like(100), main = "GBM - Current Climate", las = 1)
-writeRaster(projections.GBM.mean, filename="Current Climate_GBM.asc", formato="ascii")
+sel2=summary.eval.1000[summary.eval.1000[,"TSS"]>0.7,]
+sel2
 
-projections.CTA.all <-subset(projections_1,grep("CTA", names(projections_1)))
-projections.CTA.mean <- mean(projections.CTA.all)/10
-#plot(projections.CTA.mean, col = matlab.like(100), main = "CTA - Current Climate", las = 1)
-writeRaster(projections.CTA.mean, filename="Current Climate_CTA.asc", formato="ascii")
-
-projections.GLM.all <-subset(projections_2,grep("GLM", names(projections_2)))
-projections.GLM.mean <- mean(projections.GLM.all)/10
-#plot(projections.GLM.mean, col = matlab.like(100), main = "GLM - Current Climate", las = 1)
-writeRaster(projections.GLM.mean, filename="Current Climate_GLM.asc", formato="ascii")
-
-projections.GAM.all <-subset(projections_2,grep("GAM", names(projections_2)))
-projections.GAM.mean <- mean(projections.GAM.all)/10
-#plot(projections.GAM.mean, col = matlab.like(100), main = "GAM - Current Climate", las = 1)
-writeRaster(projections.GAM.mean, filename="Current Climate_GAM.asc", formato="ascii")
-
-projections.ANN.all <- subset(projections_2,grep("ANN", names(projections_2)))
-projections.ANN.mean <- mean(projections.ANN.all)/10
-#plot(projections.ANN.mean, col = matlab.like(100), main = "ANN - Current Climate", las = 1)
-writeRaster(projections.ANN.mean, filename="Current Climate_ANN.asc", formato="ascii")
-
-projections.SRE.all <- subset(projections_2,grep("SRE", names(projections_2)))
-projections.SRE.mean <- mean(projections.SRE.all)/10
-#plot(projections.SRE.mean, col = matlab.like(100), main = "SRE - Current Climate", las = 1)
-writeRaster(projections.SRE.mean, filename="Current Climate_SRE.asc", formato="ascii")
-
-projections.MARS.all <- subset(projections_2,grep("MARS", names(projections_2)))
-projections.MARS.mean <- mean(projections.MARS.all)/10
-#plot(projections.MARS.mean, col = matlab.like(100), main = "MARS - Current Climate", las = 1)
-writeRaster(projections.MARS.mean, filename="Current Climate_MARS.asc", formato="ascii")
-
-projections.FDA.all <- subset(projections_2,grep("FDA", names(projections_2)))
-projections.FDA.mean <- mean(projections.FDA.all)/10
-#plot(projections.FDA.mean, col = matlab.like(100), main = "FDA - Current Climate", las = 1)
-writeRaster(projections.FDA.mean, filename="Current Climate_FDA.asc", formato="ascii")
-
-projections.MAXENT.all <- subset(projections_2,grep("MAXENT.Phillips", names(projections_2)))
-projections.MAXENT.mean <- mean(projections.MAXENT.all)/10
-#plot(projections.MAXENT.mean, col = matlab.like(100), main = "MAXENT - Current Climate", las = 1)
-writeRaster(projections.MAXENT.mean, filename="Current Climate_MAXENT.asc", formato="ascii")
+projections_2 = subset(projections_2, sel2[,"ID"])
 
 
 #########################################
@@ -513,19 +473,15 @@ writeRaster(projections.MAXENT.mean, filename="Current Climate_MAXENT.asc", form
 
 #Manter apenas os algoritmos selecionados
 #O denominador deve corresponder ao número de algoritmos selecionados
-projections.all.mean <- mean(projections.RF.mean + projections.GBM.mean + projections.CTA.mean + projections.GLM.mean +
-	projections.ANN.mean + projections.GAM.mean + projections.SRE.mean + projections.MARS.mean + projections.FDA.mean + projections.MAXENT.mean)/10 
+projections.all.mean <- mean(stack(projections_1,projections_2))/10 
 
 #Os 3 comandos abaixo devem ser dados de uma só vez
 #windows(w=6, h=6)
 #plot(projections.all.mean, col = matlab.like(100), main = "Ensemble - Current Climate", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 
-writeRaster(projections.all.mean, filename="Ensemble - Current Climate.asc", format="ascii", overwrite=TRUE)
-
-
-save.image()
-
+writeRaster(projections.all.mean, filename= paste0(especie, "_Ensemble - Current Climate.tif"), format="GTiff", overwrite=TRUE)
+}
 
 ###############################################################
 ### Construção dos mapas binários a partir do ROC Threshold ###
