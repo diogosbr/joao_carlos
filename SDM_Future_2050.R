@@ -17,9 +17,9 @@ if (dir.exists("Habitat Suitability Models") == F) {
   dir.create("Habitat Suitability Models")
 }
 
-setwd("./Habitat Suitability Models")
-getwd()
-dir() #Dentre as pastas, DEVE haver "Environmental Layers" e "Shapefiles"
+#setwd("./Habitat Suitability Models")
+#getwd()
+#dir() #Dentre as pastas, DEVE haver "Environmental Layers" e "Shapefiles"
 
 
 
@@ -65,16 +65,16 @@ library(sdmvspecies)
 
 
 ### Sempre que necessário:
-# Processamento paralelo
+# Processamento paralelo ####
 
 detectCores()
 getDoParWorkers()
-cl <- parallel::makeCluster(5, outfile = "./joao.log")
+cl <- parallel::makeCluster(3, outfile = "./joao.log")
 registerDoParallel(cl)
 getDoParWorkers()
 
 # Aumento da alocação de memória
-memory.limit(10000000) # ou algum outro valor de memória (em kB)
+#memory.limit(10000000) # ou algum outro valor de memória (em kB)
 
 
 #Baixar o Maxent (Apenas rode a funcao abaixo se você não tiver baixado o Maxent)
@@ -112,9 +112,16 @@ rasterOptions(tmpdir = raster_tmp_dir)
 ####################################
 
 # Importando dados climáticos do presente
+# bio.crop <-
+#   list.files(
+#     "C:/Users/JBRJ/Documents/MEGA/Alunos/joao/env/Chelsa",
+#     full.names = TRUE,
+#     pattern = ".grd"
+#   )
+
 bio.crop <-
   list.files(
-    "C:/Users/JBRJ/Documents/MEGA/Alunos/joao/env/Chelsa",
+    "C:/env",
     full.names = TRUE,
     pattern = ".grd"
   )
@@ -212,46 +219,46 @@ env.selected <-
 env.selected <- stack(env.selected)
 names(env.selected)
 
-#-------------#
-#início do loop####
-#----------------#
+#------------------------#
+#início da modelagem ####
+#----------------------#
 
 
 if (dir.exists("outputs") == F) {
   dir.create("outputs")
 }
 
+n.runs = 2 #numero de rodadas
+n.algo1 = 3 #numero de algoritmos
+n.algo2 = 7 #numero de algoritmos
+n.conj.pa2 = 2 #conjunto de pseudo-ausencias
 
-n.runs = 2
-n.algo1 = 3
-n.algo2 = 7
-n.conj.pa2 = 2
 
 
-#for(especie in especies){
+#início do loop####
+
 (ini = Sys.time())
+#for(especie in especies[1:3]){
 foreach(especie = especies,
-        .packages = c("raster", "biomod2", 'sp')) %dopar% {
+       .packages = c("raster", "biomod2", 'sp')) %dopar% {
           #criando tabela para uma especie
           occs <- spp[spp$sp == especie, c("lon", "lat")]
           
-          nome = strsplit(as.vector(especie), " ")
-          especie = paste(nome[[1]][1], nome[[1]][2], sep = ".")
+          # nome = strsplit(as.vector(especie), " ")
+          # especie = paste(nome[[1]][1], nome[[1]][2], sep = ".")
           
           # Selecionado pontos espacialmente únicos #
           mask <- env.selected[[1]]
           cell <-
             cellFromXY(mask, occs[, 1:2]) # get the cell number for each point
           dup <- duplicated(cbind(occs[, 1:2], cell))
-          spp <- occs[!dup,]# select the records that are not duplicated
+          occs <- occs[!dup,]# select the records that are not duplicated
           dim(occs)
           
           # Visualindo os dados de ocorrência da espécie no mapa #Dê os 3 comandos de uma vez
           # data(wrld_simpl)
           # plot(wrld_simpl, xlim=c(-85, -35), ylim=c(-55, 50), col="lightgray", axes=TRUE)
           # points(spp$lon, spp$lat, col="black", bg="red", pch=21, cex=1.5, lwd=1.5)
-          
-          
           
           
           
@@ -567,7 +574,8 @@ foreach(especie = especies,
           
           #Manter apenas os algoritmos selecionados
           #O denominador deve corresponder ao número de algoritmos selecionados
-          projections.all.mean <- mean(stack(projections_1, projections_2)) / 10
+          projections.all.mean <- mean(stack(projections_1, projections_2)) / dim(stack(projections_1, projections_2))[3]
+          
           
           #Os 3 comandos abaixo devem ser dados de uma só vez
           #windows(w=6, h=6)
@@ -584,6 +592,12 @@ foreach(especie = especies,
 Sys.time() - ini
 
 #final do loop#######
+
+#---------------------#
+#pós processamento####
+#---------------------#
+
+#importando os modelos 
 
 modelos = stack(list.files("./outputs", pattern = ".tif", full.names = T))
 
