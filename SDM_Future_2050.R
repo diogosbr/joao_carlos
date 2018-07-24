@@ -229,9 +229,9 @@ if (dir.exists("outputs") == F) {
 }
 
 n.runs = 1 #numero de rodadas
-n.algo1 = 1 #numero de algoritmos
-n.algo2 = 1 #numero de algoritmos
-n.conj.pa2 = 2 #conjunto de pseudo-ausencias
+n.algo1 = 3 #numero de algoritmos
+n.algo2 = 7 #numero de algoritmos
+n.conj.pa2 = 1 #conjunto de pseudo-ausencias
 
 
 #------------------#
@@ -847,9 +847,9 @@ writeRaster(
 
 #ATÉ AQUI - SAIR????####
 
-###################################
+#---------------------------------#
 ########## FUTURO #################
-###################################
+#---------------------------------#
 
 ####################################
 ###### 2050 - rcp 8.5 ##############
@@ -864,35 +864,24 @@ writeRaster(
 #writeRaster(bio50.85_CC,"bio50.85_CC.grd",bylayer=TRUE)
 bio50.85_CC <-
   list.files(
+    "c:/env2",
+    pattern = ".grd",
+    full.names = TRUE
+  )
+
+
+bio50.85_CC <-
+  list.files(
     "./Environmental Layers/CHELSA_Future/CCSM4",
     pattern = ".grd",
     full.names = TRUE
   )
+
 bio50.85_CC
 bio50.85_CC <- stack(bio50.85_CC)
 environment50.85_CC <- rescale(bio50.85_CC)
 names(environment50.85_CC) #Atenção a esta sequência!
-names(environment50.85_CC) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_CC)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_CC)
@@ -904,6 +893,7 @@ names(environment50.85_CC) = c(
 #bio50.85_CM <- mask(crop(bio50.85_CM,neotrop),neotrop)
 #bio50.85_CM <- resample(bio50.85_CM, bio.crop)
 #writeRaster(bio50.85_CM,"bio50.85_CM.grd",bylayer=TRUE)
+
 bio50.85_CM <-
   list.files(
     "./Environmental Layers/CHELSA_Future/CMCC",
@@ -914,27 +904,7 @@ bio50.85_CM
 bio50.85_CM <- stack(bio50.85_CM)
 environment50.85_CM <- rescale(bio50.85_CM)
 names(environment50.85_CM) #Atenção a esta sequência!
-names(environment50.85_CM) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_CM)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_CM)
@@ -956,27 +926,7 @@ bio50.85_CS
 bio50.85_CS <- stack(bio50.85_CS)
 environment50.85_CS <- rescale(bio50.85_CS)
 names(environment50.85_CS) #Atenção a esta sequência!
-names(environment50.85_CS) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_CS)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_CS)
@@ -999,27 +949,7 @@ bio50.85_FG
 bio50.85_FG <- stack(bio50.85_FG)
 environment50.85_FG <- rescale(bio50.85_FG)
 names(environment50.85_FG) #Atenção a esta sequência!
-names(environment50.85_FG) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_FG)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_FG)
@@ -1042,27 +972,7 @@ bio50.85_GF
 bio50.85_GF <- stack(bio50.85_GF)
 environment50.85_GF <- rescale(bio50.85_GF)
 names(environment50.85_GF) #Atenção a esta sequência!
-names(environment50.85_GF) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_GF)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_GF)
@@ -1085,27 +995,7 @@ bio50.85_HG
 bio50.85_HG <- stack(bio50.85_HG)
 environment50.85_HG <- rescale(bio50.85_HG)
 names(environment50.85_HG) #Atenção a esta sequência!
-names(environment50.85_HG) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_BC)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_HG)
@@ -1128,27 +1018,7 @@ bio50.85_IP
 bio50.85_IP <- stack(bio50.85_IP)
 environment50.85_IP <- rescale(bio50.85_IP)
 names(environment50.85_IP) #Atenção a esta sequência!
-names(environment50.85_IP) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_MR)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_IP)
@@ -1170,27 +1040,7 @@ bio50.85_MC
 bio50.85_MC <- stack(bio50.85_MC)
 environment50.85_MC <- rescale(bio50.85_MC)
 names(environment50.85_MC) #Atenção a esta sequência!
-names(environment50.85_MC) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_BC)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_MC)
@@ -1213,27 +1063,7 @@ bio50.85_MR
 bio50.85_MR <- stack(bio50.85_MR)
 environment50.85_MR <- rescale(bio50.85_MR)
 names(environment50.85_MR) #Atenção a esta sequência!
-names(environment50.85_MR) = c(
-  "bio01",
-  "bio02",
-  "bio03",
-  "bio04",
-  "bio05",
-  "bio06",
-  "bio07",
-  "bio08",
-  "bio09",
-  "bio10",
-  "bio11",
-  "bio12",
-  "bio13",
-  "bio14",
-  "bio15",
-  "bio16",
-  "bio17",
-  "bio18",
-  "bio19"
-)
+
 ###Confira atentamente se a sequência "bate" com "names(environment50.85_MR)".
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_MR)
@@ -1338,7 +1168,7 @@ spp.projections.2050.rcp85_2_CS <- BIOMOD_Projection(
   output.format = ".grd"
 )
 
-save.image()
+#save.image()
 
 spp.projections.2050.rcp85_1_FG <- BIOMOD_Projection(
   modeling.output = sppModelOut.PA.equal,
@@ -1385,7 +1215,7 @@ spp.projections.2050.rcp85_2_HG <- BIOMOD_Projection(
   output.format = ".grd"
 )
 
-save.image()
+#save.image()
 
 spp.projections.2050.rcp85_1_IP <- BIOMOD_Projection(
   modeling.output = sppModelOut.PA.equal,
@@ -1432,7 +1262,7 @@ spp.projections.2050.rcp85_2_MR <- BIOMOD_Projection(
   output.format = ".grd"
 )
 
-save.image()
+#save.image()
 
 # Stack projections
 projections.2050.rcp85_1_CC <-
@@ -1440,7 +1270,9 @@ projections.2050.rcp85_1_CC <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_1_CC/proj_2050.rcp85_1_CC_Occurrence.grd"
+      "/proj_2050.rcp85_1_CC/proj_2050.rcp85_1_CC_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_1_CC)
@@ -1449,7 +1281,9 @@ projections.2050.rcp85_2_CC <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_2_CC/proj_2050.rcp85_2_CC_Occurrence.grd"
+      "/proj_2050.rcp85_2_CC/proj_2050.rcp85_2_CC_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_2_CC)
@@ -2097,8 +1931,8 @@ projections.all.mean.2050.rcp85_CC <-
       projections.ANN.mean.2050.rcp85_CC + projections.SRE.mean.2050.rcp85_CC + projections.MARS.mean.2050.rcp85_CC + projections.FDA.mean.2050.rcp85_CC + projections.MAXENT.mean.2050.rcp85_CC
   )
 writeRaster(projections.all.mean.2050.rcp85_CC,
-            filename = "Future Climate - 2050_rcp8.5_CC.asc",
-            format = "ascii")
+            filename = "Future Climate - 2050_rcp8.5_CC.tif",
+            format = "GTiff")
 
 #CM
 projections.all.mean.2050.rcp85_CM <-
@@ -2210,24 +2044,8 @@ ensemble2050rcp8.5 <-
     projections.all.mean.2050.rcp85_MC,
     projections.all.mean.2050.rcp85_MR
   ) / 10
-writeRaster(ensemble2050rcp8.5, filename = "Ensemble - Future Climate - 2050_rcp8.5.asc", format =
-              "ascii")
-windows(w = 6, h = 6)
-plot(
-  ensemble2050rcp8.5,
-  col = matlab.like(100),
-  main = "Ensemble - 2050 - rcp8.5",
-  las = 1
-)
-plot(
-  domains,
-  add = TRUE,
-  col = "transparent",
-  border = "white",
-  lwd = 0.5
-)
-
-save.image()
+writeRaster(ensemble2050rcp8.5, filename = "Ensemble - Future Climate - 2050_rcp8.5.tif", format =
+              "GTiff")
 
 
 ###############################
@@ -2294,8 +2112,8 @@ projections.binary.mean_2050.rcp85_CC <-
   )
 
 writeRaster(projections.binary.mean_2050.rcp85_CC,
-            filename = "Future Climate_binary_2050.rcp85_CC.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_CC.tif",
+            format = "GTiff")
 
 
 ##########################
@@ -3044,290 +2862,3 @@ save.image()
 
 
 #FIM-----------------------------------------------------------------------------### Daqui em diante, não proceder por enquanto.
-
-################################################################################################################################################
-################################################################################################################################################
-################################################################################################################################################
-################################################################################################################################################
-################################################################################################################################################
-
-## ***************************
-
-
-## Calculate area of occupancy from binary unprojected area
-## ********************************************************
-
-area.RF.2050.rcp85 <- area(projections.RF.2050.rcp85.mean.binary)
-class(area.RF.2050.rcp85)
-str(values(area.RF.2050.rcp85))
-summary(values(area.RF.2050.rcp85))
-
-area.total.RF.2050.rcp85 <-
-  data.frame(values(projections.RF.2050.rcp85.mean.binary),
-             values(area.RF.2050.rcp85)) #Combine binary and area info for each cell
-names(area.total.RF.2050.rcp85) <- c("Pres.Abs", "Area")
-head(area.total.RF.2050.rcp85)
-area.2050.rcp85 = tapply(area.total.RF.2050.rcp85$Area,
-                         area.total.RF.2050.rcp85$Pres.Abs,
-                         sum)
-area.2050.rcp85.presence = area.2050.rcp85[2]
-area.2050.rcp85.presence
-
-
-
-## Calculating the ratio between present and future areas
-## ******************************************************
-
-predict.area.2050.rcp85.log = log(area.2050.rcp85.presence / area.current.presence)
-predict.area.2050.rcp85.ratio = (area.2050.rcp85.presence / area.current.presence)
-predict.area.2050.rcp85.percent = (area.2050.rcp85.presence / area.current.presence) /
-  100
-
-predict.area.2050.rcp26 # result = -0.01589181(log)
-predict.area.2050.rcp45 # result = -0.1000519(log)
-predict.area.2050.rcp85 # result = -0.3275401(log)
-
-
-
-
-## 2070
-## ****
-## Repeat procedures for 2050
-
-## Calculating the diference between present and future areas
-## ********************************************************
-
-predict.area.2070.rcp26 # result = -0.05286374
-predict.area.2070.rcp45 # result = -0.3725469
-predict.area.2070.rcp85 # result = -0.5381555
-
-
-
-
-# Convert to binary and calculate area of occupancy
-# *************************************************
-projections.list3 <- list()
-projections.list4 <- list()
-projections.list5 <- list()
-projections.list6 <- list()
-
-for (i in 1:length(projections.list2)) {
-  ## Convert to binary
-  projections.binary <-
-    BinaryTransformation(projections.list2[[i]], 0.67)
-  class(projections.binary) #This is a raster layer!
-  str(values(projections.binary)) #These are only the binary values!
-  summary(values(projections.binary))
-  
-  
-  ## Calculate area of occupancy from binary unprojected area
-  area <- area(projections.binary)
-  class(area)
-  str(values(area))
-  summary(values(area))
-  
-  area.future <-
-    data.frame(values(projections.binary), values(area)) #Combine binary and area info for each cell
-  names(area.future) <- c("Pres.Abs", "Area")
-  head(area.future)
-  area.future.2 = tapply(area.future$Area, area.future$Pres.Abs, sum) #Area of occupancy = xxx km2 (will vary every time!)
-  area.future.presence = area.future.2[2]
-  area.future.presence
-  
-  projections.list3[[i]] <-
-    assign(paste("area", i, sep = ""), area.future.presence)
-  
-  
-  ## Calculating the difference between present and future areas
-  predict.area.log = log(area.future.presence / area.current.presence)
-  predict.area.ratio = (area.future.presence / area.current.presence)
-  predict.area.reduction = (1 - predict.area.ratio)
-  
-  projections.list4[[i]] <-
-    assign(paste("projection", i, sep = ""), predict.area.log)
-  projections.list5[[i]] <-
-    assign(paste("projection", i, sep = ""), predict.area.ratio)
-  projections.list6[[i]] <-
-    assign(paste("projection", i, sep = ""), predict.area.reduction)
-}
-
-projections.list3.df <-
-  data.frame(matrix(unlist(projections.list3)))
-names(projections.list3.df) <- "area.adequability"
-
-projections.list4.df <-
-  data.frame(matrix(unlist(projections.list4)))
-names(projections.list4.df) <- "area.reduced.log"
-
-projections.list5.df <-
-  data.frame(matrix(unlist(projections.list5)))
-names(projections.list5.df) <- "area.reduced.ratio"
-
-projections.list6.df <-
-  data.frame(matrix(unlist(projections.list6)))
-names(projections.list6.df) <- "area.reduced.percent"
-
-summary.results <-
-  data.frame(
-    projection.name.list.df,
-    projections.list3.df,
-    projections.list4.df,
-    projections.list5.df,
-    projections.list6.df
-  )
-head(summary.results)
-summary(summary.results)
-
-
-
-
-#################################################################################
-## Calculating the diference between projections presence and deforested areas ##
-#################################################################################
-
-
-#############
-## Present ##
-#############
-
-## Crop projection for Cerrado only
-dis.cerrado <-
-  readOGR(
-    "C:/Users/Vitor HGL Cavalcante/Documents/GitHub/Extinction-risk-Micrablepharus-atticolus/Cerrado_shapefiles",
-    "Cerrado_Eco_merge_Clip"
-  )
-plot(dis.cerrado)
-proj.only.cer <- mask(projections.RF.mean.binary, dis.cerrado)
-plot(proj.only.cer)
-
-## Cerrado Remanescent Layer
-## With remaining "Tatá"
-reman.cer.2010 <-
-  readOGR(
-    "C:/Users/Vitor HGL Cavalcante/Documents/GitHub/Extinction-risk-Micrablepharus-atticolus/Remanescentes_biomas/REMANESCENTE_CERRADO_2010",
-    "Remanescente_Cerrado_2010"
-  )
-plot(reman.cer.2010)
-class(reman.cer.2010)
-
-reman.cer.2010r <-
-  rasterize(
-    reman.cer.2010,
-    environment,
-    1,
-    background = 0,
-    filename = "reman.cer.2010r",
-    overwrite = T
-  )
-plot(reman.cer.2010r)
-writeRaster(reman.cer.2010r,
-            "reman.cer.2010r.tif",
-            format = "GTiff",
-            overwrite = T)
-reman.cer.2010r <- raster("reman.cer.2010r.tif")
-
-## Calculating areas
-area.occurrence.r <- (reman.cer.2010r * proj.only.cer)
-area.occurrence.final.r <- area(area.occurrence.r)
-
-area.total.r <-
-  data.frame(values(area.occurrence.final.r), values(area.occurrence.r))
-names(area.total.r) <- c("Area", "Pres.Abs")
-head(area.total.r)
-area.current.r = tapply(area.total.r$Area, area.total.r$Pres.Abs, sum) #Area of occupancy = 534,124,2 km2
-area.current.presence.r = area.current.r[2]
-area.current.presence.r
-
-
-
-
-############
-## Future ##
-############
-
-# Convert to binary and calculate area of occupancy to remaining in Cerrado
-# *************************************************************************
-projections.list3.r <- list()
-projections.list4.r <- list()
-projections.list5.r <- list()
-projections.list6.r <- list()
-
-for (i in 1:length(projections.list2)) {
-  ## Convert to binary
-  projections.binary <-
-    BinaryTransformation(projections.list2[[i]], 0.67)
-  
-  ## Crop projection for Cerrado only
-  proj.future.only.cer <- mask(projections.binary, dis.cerrado)
-  
-  ## Calculating remaining area
-  area.r <- (reman.cer.2010r * proj.future.only.cer)
-  area.final.r <- area(area.r)
-  
-  area.future.r <- data.frame(values(area.final.r), values(area.r))
-  names(area.future.r) <- c("Area", "Pres.Abs")
-  head(area.future.r)
-  area.future.2.r = tapply(area.future.r$Area, area.future.r$Pres.Abs, sum)
-  area.future.presence.r = area.future.2.r[2]
-  area.future.presence.r
-  
-  projections.list3.r[[i]] <-
-    assign(paste("area", i, sep = ""), area.future.presence.r)
-  
-  
-  ## Calculating the difference between present and future areas
-  predict.area.log.r = log(area.future.presence.r / area.current.presence) ## Current total or only Cerrado???
-  predict.area.ratio.r = (area.future.presence.r / area.current.presence)
-  predict.area.reduction.r = (1 - predict.area.ratio.r)
-  
-  projections.list4.r[[i]] <-
-    assign(paste("projection", i, sep = ""), predict.area.log.r)
-  projections.list5.r[[i]] <-
-    assign(paste("projection", i, sep = ""), predict.area.ratio.r)
-  projections.list6.r[[i]] <-
-    assign(paste("projection", i, sep = ""), predict.area.reduction.r)
-}
-
-projections.list3.df.r <-
-  data.frame(matrix(unlist(projections.list3.r)))
-names(projections.list3.df.r) <- "area.adequability"
-
-projections.list4.df.r <-
-  data.frame(matrix(unlist(projections.list4.r)))
-names(projections.list4.df.r) <- "area.reduced.log"
-
-projections.list5.df.r <-
-  data.frame(matrix(unlist(projections.list5.r)))
-names(projections.list5.df.r) <- "area.reduced.ratio"
-
-projections.list6.df.r <-
-  data.frame(matrix(unlist(projections.list6.r)))
-names(projections.list6.df.r) <- "area.reduced.percent"
-
-summary.results.r <-
-  data.frame(
-    projection.name.list.df,
-    projections.list3.df.r,
-    projections.list4.df.r,
-    projections.list5.df.r,
-    projections.list6.df.r
-  )
-head(summary.results.r)
-summary(summary.results.r)
-data.frame(summary.results.r)
-write.table(
-  summary.results.r,
-  "summary.results.r.txt",
-  row.names = T,
-  col.names = T
-)
-
-#Remoção de Arquivos Temporários
-## remove the tmp dir
-unlink(raster_tmp_dir, recursive = T, force = T)
-## Remove TempFiles
-showTmpFiles ()##arquivos temp. de no processo
-plot(wrld_simpl, add = T)
-
-## End
-## ***
