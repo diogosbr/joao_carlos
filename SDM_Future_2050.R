@@ -1,6 +1,6 @@
-#######################################
-## DEFININDO O DIRETÓRIO DE TRABALHO ##
-#######################################
+#---------------------------------------##
+## DEFININDO O DIRETÓRIO DE TRABALHO ####
+#---------------------------------------#
 
 #Para seguir essa rotina, é necessário que:
 #1) Defina-se uma pasta denominada "Habitat Suitability Models" como diretório.
@@ -24,9 +24,9 @@ if (dir.exists("Habitat Suitability Models") == F) {
 
 
 
-########################################
-## INSTALANDO E CARREGANDO OS PACOTES ##
-########################################
+#-----------------------------------------#
+## INSTALANDO E CARREGANDO OS PACOTES #####
+#-----------------------------------------#
 
 #install.packages("biomod2", dep=T)
 #install.packages("car", dep=T)
@@ -107,9 +107,9 @@ rasterOptions(tmpdir = raster_tmp_dir)
 #dê o comando acima antes de retomar a rotina.
 
 
-####################################
-## IMPORTANDO E CHECANDO OS DADOS ##
-####################################
+#---------------------------------------#
+## IMPORTANDO E CHECANDO OS DADOS ######
+#---------------------------------------#
 
 # Importando dados climáticos do presente
 # bio.crop <-
@@ -169,9 +169,9 @@ especies
 #which(is.na(csum))
 #summary(spp[, c("x")]) # substitua 'x' pelo nome da coluna
 
-#####################################################
-## PRIMEIRO PASSO DE VERIFICAÇÃO DE COLINEARIDADES ##
-#####################################################
+#-------------------------------------------------------#
+## PRIMEIRO PASSO DE VERIFICAÇÃO DE COLINEARIDADES #####
+#------------------------------------------------------#
 
 # Obtendo os dados climáticos para os pontos de ocorrência
 presvals <- extract(bio.crop, spp[, -1])
@@ -193,9 +193,9 @@ bio.crop2
 names(bio.crop2)
 
 
-####################################################
-## SEGUNDO PASSO DE VERIFICAÇÃO DE COLINEARIDADES ##
-####################################################
+#-----------------------------------------------------#
+## SEGUNDO PASSO DE VERIFICAÇÃO DE COLINEARIDADES #####
+#-----------------------------------------------------#
 
 # Selecionando 10000 pontos aleatórios ao longo do Neotrópico
 mask <- bio.crop[[1]]
@@ -228,15 +228,15 @@ if (dir.exists("outputs") == F) {
   dir.create("outputs")
 }
 
-n.runs = 2 #numero de rodadas
-n.algo1 = 3 #numero de algoritmos
-n.algo2 = 7 #numero de algoritmos
+n.runs = 1 #numero de rodadas
+n.algo1 = 1 #numero de algoritmos
+n.algo2 = 1 #numero de algoritmos
 n.conj.pa2 = 2 #conjunto de pseudo-ausencias
 
 
-
-#início do loop####
-
+#------------------#
+#Início do loop####
+#-----------------#
 (ini = Sys.time())
 #for(especie in especies[1:3]){
 foreach(especie = especies,
@@ -262,9 +262,9 @@ foreach(especie = especies,
           
           
           
-          ################################################
-          ## GENERATING OTHER REQUIRED OBJECTS FOR SDM ###
-          ################################################
+          #------------------------------------------------#
+          ## GENERATING OTHER REQUIRED OBJECTS FOR SDM #####
+          #------------------------------------------------#
           
           # Convert dataset to SpatialPointsDataFrame (only presences)
           myRespXY <-
@@ -273,9 +273,9 @@ foreach(especie = especies,
           occurrence.resp <-  rep(1, length(myRespXY$lon))
           
           
-          ############################################
-          ## FIT SPECIES DISTRIBUTION MODELS - SDMS ##
-          ############################################
+          #--------------------------------------------#
+          ## FIT SPECIES DISTRIBUTION MODELS - SDMS ####
+          #--------------------------------------------#
           
           
           coord1 = occs
@@ -343,9 +343,9 @@ foreach(especie = especies,
             )))
           
           
-          #################
-          ### Modelagem ###
-          #################
+          #-----------------#
+          ### Modelagem ####
+          #----------------#
           
           # Com partição treino x teste:
           sppModelOut.PA.equal <- BIOMOD_Modeling(
@@ -391,9 +391,9 @@ foreach(especie = especies,
           #save.image()
           
           
-          ###################################
-          ## EVALUATE MODELS USING BIOMOD2 ##
-          ###################################
+          #-----------------------------------#
+          ## EVALUATE MODELS USING BIOMOD2 ####
+          #----------------------------------#
           
           # Sobre as métricas avaliativas,
           # ver http://www.cawcr.gov.au/projects/verification/#Methods_for_dichotomous_forecasts
@@ -497,15 +497,15 @@ foreach(especie = especies,
           
           
           
-          ###############################################################
-          ### Quais algoritmos foram selecionados?
-          ###############################################################
+          #-------------------------------------------#
+          ### Quais algoritmos foram selecionados? ####
+          #-------------------------------------------#
           
           
           
-          ###############################
-          ## PRODUZINDO AS PROJEÇÕES ##
-          ###############################
+          #-----------------------------#
+          ## PRODUZINDO AS PROJEÇÕES ####
+          #----------------------------#
           
           spp.projections_1 <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.equal,
@@ -568,9 +568,9 @@ foreach(especie = especies,
           projections_2 = subset(projections_2, sel2[, "ID"])
           
           
-          #########################################
-          # Consenso entre as Projeções Contínuas #
-          #########################################
+          #-------------------------------------------#
+          # Consenso entre as Projeções Contínuas ####
+          #------------------------------------------#
           
           #Manter apenas os algoritmos selecionados
           #O denominador deve corresponder ao número de algoritmos selecionados
@@ -591,7 +591,7 @@ foreach(especie = especies,
         }
 Sys.time() - ini
 
-#final do loop#######
+#Final do loop#######
 
 #---------------------#
 #pós processamento####
