@@ -103,7 +103,7 @@ if (dir.exists("raster_tmp") == F) {
 
 ## set raster options
 rasterOptions(tmpdir = raster_tmp_dir)
-#Caso o PC desligue sem que você tenha concluído a modelagem,
+#Caso o PC desligue sem que você tenha conclu??do a modelagem,
 #dê o comando acima antes de retomar a rotina.
 
 
@@ -162,7 +162,7 @@ table(spp$sp)
 especies <- unique(spp$sp)
 especies
 
-# Diagnosticando possíveis problemas com a matriz biótica:
+# Diagnosticando poss??veis problemas com a matriz biótica:
 #csum <- colSums(spp[,2:3])
 #any(is.na(csum))
 ### Se aparecer [FALSE], está tudo certo. Se não, siga os dois passos abaixo.
@@ -220,7 +220,7 @@ env.selected <- stack(env.selected)
 names(env.selected)
 
 #------------------------#
-#início da modelagem ####
+#in??cio da modelagem ####
 #----------------------#
 
 
@@ -235,7 +235,7 @@ n.conj.pa2 = 1 #conjunto de pseudo-ausencias
 
 
 #------------------#
-#Início do loop####
+#In??cio do loop####
 #-----------------#
 (ini = Sys.time())
 #for(especie in especies[1:3]){
@@ -569,7 +569,7 @@ foreach(especie = especies,
           
           
           #-------------------------------------------#
-          # Consenso entre as Projeções Contínuas ####
+          # Consenso entre as Projeções Cont??nuas ####
           #------------------------------------------#
           
           #Manter apenas os algoritmos selecionados
@@ -714,8 +714,8 @@ summary(values(projections.binary.CTA.mean))
 #plot(projections.binary.CTA.mean, col = matlab.like(100), main = "Current Climate_CTA", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.CTA.mean,
-            filename = "Current Climate_CTA - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_CTA - BINARY.tif",
+            formato = "GTiff")
 
 projections.binary.GBM.mean <-
   BinaryTransformation(projections.GBM.mean, th_GBM) #Calcular th
@@ -724,8 +724,8 @@ summary(values(projections.binary.GBM.mean))
 #plot(projections.binary.GBM.mean, col = matlab.like(100), main = "Current Climate_GBM", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.GBM.mean,
-            filename = "Current Climate_GBM - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_GBM - BINARY.tif",
+            formato = "GTiff")
 
 projections.binary.RF.mean <-
   BinaryTransformation(projections.RF.mean, th_RF) #Calcular th
@@ -734,8 +734,8 @@ summary(values(projections.binary.RF.mean))
 #plot(projections.binary.RF.mean, col = matlab.like(100), main = "Current Climate_RF", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.RF.mean,
-            filename = "Current Climate_RF - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_RF - BINARY.tif",
+            formato = "GTiff")
 
 projections.binary.ANN.mean <-
   BinaryTransformation(projections.ANN.mean, th_ANN) #Calcular th
@@ -744,8 +744,8 @@ summary(values(projections.binary.ANN.mean))
 #plot(projections.binary.ANN.mean, col = matlab.like(100), main = "Current Climate_ANN", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.ANN.mean,
-            filename = "Current Climate_ANN - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_ANN - BINARY.tif",
+            formato = "GTiff")
 
 projections.binary.FDA.mean <-
   BinaryTransformation(projections.FDA.mean, th_FDA) #Calcular th
@@ -754,8 +754,8 @@ summary(values(projections.binary.FDA.mean))
 #plot(projections.binary.FDA.mean, col = matlab.like(100), main = "Current Climate_FDA", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.FDA.mean,
-            filename = "Current Climate_FDA - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_FDA - BINARY.tif",
+            formato = "GTiff")
 
 projections.binary.GAM.mean <-
   BinaryTransformation(projections.GAM.mean, th_GAM) #Calcular th
@@ -764,8 +764,8 @@ summary(values(projections.binary.GAM.mean))
 #plot(projections.binary.GAM.mean, col = matlab.like(100), main = "Current Climate_GAM", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.GAM.mean,
-            filename = "Current Climate_GAM - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_GAM - BINARY.tif",
+            formato = "GTiff")
 
 projections.binary.GLM.mean <-
   BinaryTransformation(projections.GLM.mean, th_GLM) #Calcular th
@@ -774,8 +774,8 @@ summary(values(projections.binary.GLM.mean))
 #plot(projections.binary.GAM.mean, col = matlab.like(100), main = "Current Climate_GLM", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.GLM.mean,
-            filename = "Current Climate_GLM - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_GLM - BINARY.tif",
+            formato = "GTiff")
 
 projections.binary.MARS.mean <-
   BinaryTransformation(projections.MARS.mean, th_MARS) #Calcular th
@@ -784,18 +784,18 @@ summary(values(projections.binary.MARS.mean))
 #plot(projections.binary.MARS.mean, col = matlab.like(100), main = "Current Climate_MARS", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.MARS.mean,
-            filename = "Current Climate_MARS - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_MARS - BINARY.tif",
+            formato = "GTiff")
 
-projections.binary.MAXENT.mean <-
-  BinaryTransformation(projections.MAXENT.mean, th_MAXENT.Phillips) #Calcular th
-class(projections.binary.MAXENT.mean)
-summary(values(projections.binary.MAXENT.mean))
-#plot(projections.binary.MAXENT.mean, col = matlab.like(100), main = "Current Climate_MAXENT.Phillips", las = 1)
+projections.binary.MAXENT.Phillips.mean <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean, th_MAXENT.Phillips) #Calcular th
+class(projections.binary.MAXENT.Phillips.mean)
+summary(values(projections.binary.MAXENT.Phillips.mean))
+#plot(projections.binary.MAXENT.Phillips.mean, col = matlab.like(100), main = "Current Climate_MAXENT.Phillips", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
-writeRaster(projections.binary.MAXENT.mean,
-            filename = "Current Climate_MAXENT.Phillips - BINARY.asc",
-            formato = "ascii")
+writeRaster(projections.binary.MAXENT.Phillips.mean,
+            filename = "Current Climate_MAXENT.Phillips - BINARY.tif",
+            formato = "GTiff")
 
 projections.binary.SRE.mean <-
   BinaryTransformation(projections.SRE.mean, th_SRE) #Calcular th
@@ -804,8 +804,8 @@ summary(values(projections.binary.SRE.mean))
 #plot(projections.binary.SRE.mean, col = matlab.like(100), main = "Current Climate_SRE", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(projections.binary.SRE.mean,
-            filename = "Current Climate_SRE - BINARY.asc",
-            formato = "ascii")
+            filename = "Current Climate_SRE - BINARY.tif",
+            formato = "GTiff")
 
 
 
@@ -818,15 +818,15 @@ projections.all.mean_bin1 <-
   mean(
     projections.binary.RF.mean + projections.binary.GBM.mean + projections.binary.CTA.mean +
       projections.binary.GLM.mean + projections.binary.GAM.mean + projections.binary.ANN.mean +
-      projections.binary.SRE.mean + projections.binary.MARS.mean + projections.binary.FDA.mean + projections.binary.MAXENT.mean
+      projections.binary.SRE.mean + projections.binary.MARS.mean + projections.binary.FDA.mean + projections.binary.MAXENT.Phillips.mean
   )
 #windows(w=6, h=6)
 #plot(projections.all.mean_bin, col = matlab.like(100), main = "Binary Ensemble - Current Climate", las = 1)
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(
   projections.all.mean_bin,
-  filename = "Ensemble - Current Climate - mean binary.asc",
-  format = "ascii",
+  filename = "Ensemble - Current Climate - mean binary.tif",
+  format = "GTiff",
   overwrite = TRUE
 )
 
@@ -838,8 +838,8 @@ projections.all.mean_bin2 <-
 #plot(domains, add = TRUE, col="transparent", border="white", lwd = 0.5)
 writeRaster(
   projections.all.mean_bin,
-  filename = "Ensemble - Current Climate - final binary.asc",
-  format = "ascii",
+  filename = "Ensemble - Current Climate - final binary.tif",
+  format = "GTiff",
   overwrite = TRUE
 )
 
@@ -1000,30 +1000,7 @@ names(environment50.85_HG) #Atenção a esta sequência!
 ###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
 #plot(environment50.85_HG)
 
-#GCM 7: IPSL
-#bio50.85_IP <- list.files("./Environmental Layers/CHELSA_Future/IPSL", pattern=".tif", full.names=TRUE)
-#bio50.85_IP
-#bio50.85_IP <- stack(bio50.85_IP)
-#names(bio50.85_IP)
-#bio50.85_IP <- mask(crop(bio50.85_IP,neotrop),neotrop)
-#bio50.85_IP <- resample(bio50.85_IP, bio.crop)
-#writeRaster(bio50.85_IP,"bio50.85_IP.grd",bylayer=TRUE)
-bio50.85_IP <-
-  list.files(
-    "./Environmental Layers/CHELSA_Future/IPSL",
-    pattern = ".grd",
-    full.names = TRUE
-  )
-bio50.85_IP
-bio50.85_IP <- stack(bio50.85_IP)
-environment50.85_IP <- rescale(bio50.85_IP)
-names(environment50.85_IP) #Atenção a esta sequência!
-
-###Confira atentamente se a sequência "bate" com "names(environment50.85_MR)".
-###Atenção: se você errar no comando acima, todo o restante da modelagem ficará comprometida!
-#plot(environment50.85_IP)
-
-###GCM 8: MIROC5
+###GCM 7: MIROC5
 #bio50.85_MC <- list.files("./Environmental Layers/CHELSA_Future/MIROC5", pattern=".tif", full.names=TRUE)
 #bio50.85_MC
 #bio50.85_MC <- stack(bio50.85_MC)
@@ -1082,8 +1059,6 @@ env50.85.selected_GF <-
   subset(environment50.85_GF, c(names(env.selected)))
 env50.85.selected_HG <-
   subset(environment50.85_HG, c(names(env.selected)))
-env50.85.selected_IP <-
-  subset(environment50.85_IP, c(names(env.selected)))
 env50.85.selected_MC <-
   subset(environment50.85_MC, c(names(env.selected)))
 env50.85.selected_MR <-
@@ -1105,7 +1080,6 @@ scenario.list <- list(
   env50.85.selected_FG,
   env50.85.selected_GF,
   env50.85.selected_HG,
-  env50.85.selected_IP,
   env50.85.selected_MC,
   env50.85.selected_MR
 )
@@ -1117,7 +1091,6 @@ names(scenario.list) <- c(
   "env50.85_FG",
   "env50.85_GF",
   "env50.85_HG",
-  "env50.85_IP",
   "env50.85_MC",
   "env50.85_MR"
 )
@@ -1217,20 +1190,6 @@ spp.projections.2050.rcp85_2_HG <- BIOMOD_Projection(
 
 #save.image()
 
-spp.projections.2050.rcp85_1_IP <- BIOMOD_Projection(
-  modeling.output = sppModelOut.PA.equal,
-  new.env = env50.85.selected_IP,
-  proj.name = "2050.rcp85_1_IP",
-  selected.models = "all",
-  output.format = ".grd"
-)
-spp.projections.2050.rcp85_2_IP <- BIOMOD_Projection(
-  modeling.output = sppModelOut.PA.10000,
-  new.env = env50.85.selected_IP,
-  proj.name = "2050.rcp85_2_IP",
-  selected.models = "all",
-  output.format = ".grd"
-)
 
 spp.projections.2050.rcp85_1_MC <- BIOMOD_Projection(
   modeling.output = sppModelOut.PA.equal,
@@ -1293,7 +1252,9 @@ projections.2050.rcp85_1_CM <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_1_CM/proj_2050.rcp85_1_CM_Occurrence.grd"
+      "/proj_2050.rcp85_1_CM/proj_2050.rcp85_1_CM_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_1_CM)
@@ -1302,7 +1263,9 @@ projections.2050.rcp85_2_CM <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_2_CM/proj_2050.rcp85_2_CM_Occurrence.grd"
+      "/proj_2050.rcp85_2_CM/proj_2050.rcp85_2_CM_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_2_CM)
@@ -1312,7 +1275,9 @@ projections.2050.rcp85_1_CS <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_1_CS/proj_2050.rcp85_1_CS_Occurrence.grd"
+      "/proj_2050.rcp85_1_CS/proj_2050.rcp85_1_CS_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_1_CS)
@@ -1321,7 +1286,9 @@ projections.2050.rcp85_2_CS <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_2_CS/proj_2050.rcp85_2_CS_Occurrence.grd"
+      "/proj_2050.rcp85_2_CS/proj_2050.rcp85_2_CS_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_2_CS)
@@ -1331,7 +1298,9 @@ projections.2050.rcp85_1_FG <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_1_FG/proj_2050.rcp85_1_FG_Occurrence.grd"
+      "/proj_2050.rcp85_1_FG/proj_2050.rcp85_1_FG_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_1_FG)
@@ -1340,7 +1309,9 @@ projections.2050.rcp85_2_FG <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_2_FG/proj_2050.rcp85_2_FG_Occurrence.grd"
+      "/proj_2050.rcp85_2_FG/proj_2050.rcp85_2_FG_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_2_FG)
@@ -1350,7 +1321,9 @@ projections.2050.rcp85_1_GF <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_1_GF/proj_2050.rcp85_1_GF_Occurrence.grd"
+      "/proj_2050.rcp85_1_GF/proj_2050.rcp85_1_GF_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_1_GF)
@@ -1359,7 +1332,9 @@ projections.2050.rcp85_2_GF <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_2_GF/proj_2050.rcp85_2_GF_Occurrence.grd"
+      "/proj_2050.rcp85_2_GF/proj_2050.rcp85_2_GF_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_2_GF)
@@ -1369,7 +1344,9 @@ projections.2050.rcp85_1_HG <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_1_HG/proj_2050.rcp85_1_HG_Occurrence.grd"
+      "/proj_2050.rcp85_1_HG/proj_2050.rcp85_1_HG_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_1_HG)
@@ -1378,36 +1355,21 @@ projections.2050.rcp85_2_HG <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_2_HG/proj_2050.rcp85_2_HG_Occurrence.grd"
+      "/proj_2050.rcp85_2_HG/proj_2050.rcp85_2_HG_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_2_HG)
-
-projections.2050.rcp85_1_IP <-
-  stack(
-    paste0(
-      "./",
-      diretorio,
-      "/proj_2050.rcp85_1_IP/proj_2050.rcp85_1_IP_Occurrence.grd"
-    )
-  )
-names(projections.2050.rcp85_1_IP)
-projections.2050.rcp85_2_IP <-
-  stack(
-    paste0(
-      "./",
-      diretorio,
-      "/proj_2050.rcp85_2_IP/proj_2050.rcp85_2_IP_Occurrence.grd"
-    )
-  )
-names(projections.2050.rcp85_2_IP)
 
 projections.2050.rcp85_1_MC <-
   stack(
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_1_MC/proj_2050.rcp85_1_MC_Occurrence.grd"
+      "/proj_2050.rcp85_1_MC/proj_2050.rcp85_1_MC_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_1_MC)
@@ -1416,7 +1378,9 @@ projections.2050.rcp85_2_MC <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_2_MC/proj_2050.rcp85_2_MC_Occurrence.grd"
+      "/proj_2050.rcp85_2_MC/proj_2050.rcp85_2_MC_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_2_MC)
@@ -1426,7 +1390,9 @@ projections.2050.rcp85_1_MR <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_1_MR/proj_2050.rcp85_1_MR_Occurrence.grd"
+      "/proj_2050.rcp85_1_MR/proj_2050.rcp85_1_MR_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_1_MR)
@@ -1435,7 +1401,9 @@ projections.2050.rcp85_2_MR <-
     paste0(
       "./",
       diretorio,
-      "/proj_2050.rcp85_2_MR/proj_2050.rcp85_2_MR_Occurrence.grd"
+      "/proj_2050.rcp85_2_MR/proj_2050.rcp85_2_MR_Occurrence.",
+      especie,
+      ".grd"
     )
   )
 names(projections.2050.rcp85_2_MR)
@@ -1489,10 +1457,10 @@ projections.FDA.all.2050.rcp85_CC <-
 projections.FDA.mean.2050.rcp85_CC <-
   mean(projections.FDA.all.2050.rcp85_CC) / 10
 
-projections.MAXENT.all.2050.rcp85_CC <-
+projections.MAXENT.Phillips.all.2050.rcp85_CC <-
   subset(projections.2050.rcp85_2_CC, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_CC)))
-projections.MAXENT.mean.2050.rcp85_CC <-
-  mean(projections.MAXENT.all.2050.rcp85_CC) / 10
+projections.MAXENT.Phillips.mean.2050.rcp85_CC <-
+  mean(projections.MAXENT.Phillips.all.2050.rcp85_CC) / 10
 
 
 #CM
@@ -1541,10 +1509,10 @@ projections.FDA.all.2050.rcp85_CM <-
 projections.FDA.mean.2050.rcp85_CM <-
   mean(projections.FDA.all.2050.rcp85_CM) / 10
 
-projections.MAXENT.all.2050.rcp85_CM <-
+projections.MAXENT.Phillips.all.2050.rcp85_CM <-
   subset(projections.2050.rcp85_2_CM, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_CM)))
-projections.MAXENT.mean.2050.rcp85_CM <-
-  mean(projections.MAXENT.all.2050.rcp85_CM) / 10
+projections.MAXENT.Phillips.mean.2050.rcp85_CM <-
+  mean(projections.MAXENT.Phillips.all.2050.rcp85_CM) / 10
 
 
 #CS
@@ -1593,10 +1561,10 @@ projections.FDA.all.2050.rcp85_CS <-
 projections.FDA.mean.2050.rcp85_CS <-
   mean(projections.FDA.all.2050.rcp85_CS) / 10
 
-projections.MAXENT.all.2050.rcp85_CS <-
+projections.MAXENT.Phillips.all.2050.rcp85_CS <-
   subset(projections.2050.rcp85_2_CS, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_CS)))
-projections.MAXENT.mean.2050.rcp85_CS <-
-  mean(projections.MAXENT.all.2050.rcp85_CS) / 10
+projections.MAXENT.Phillips.mean.2050.rcp85_CS <-
+  mean(projections.MAXENT.Phillips.all.2050.rcp85_CS) / 10
 
 
 #FG
@@ -1645,10 +1613,10 @@ projections.FDA.all.2050.rcp85_FG <-
 projections.FDA.mean.2050.rcp85_FG <-
   mean(projections.FDA.all.2050.rcp85_FG) / 10
 
-projections.MAXENT.all.2050.rcp85_FG <-
+projections.MAXENT.Phillips.all.2050.rcp85_FG <-
   subset(projections.2050.rcp85_2_FG, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_FG)))
-projections.MAXENT.mean.2050.rcp85_FG <-
-  mean(projections.MAXENT.all.2050.rcp85_FG) / 10
+projections.MAXENT.Phillips.mean.2050.rcp85_FG <-
+  mean(projections.MAXENT.Phillips.all.2050.rcp85_FG) / 10
 
 save.image()
 
@@ -1698,10 +1666,10 @@ projections.FDA.all.2050.rcp85_GF <-
 projections.FDA.mean.2050.rcp85_GF <-
   mean(projections.FDA.all.2050.rcp85_GF) / 10
 
-projections.MAXENT.all.2050.rcp85_GF <-
+projections.MAXENT.Phillips.all.2050.rcp85_GF <-
   subset(projections.2050.rcp85_2_GF, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_GF)))
-projections.MAXENT.mean.2050.rcp85_GF <-
-  mean(projections.MAXENT.all.2050.rcp85_GF) / 10
+projections.MAXENT.Phillips.mean.2050.rcp85_GF <-
+  mean(projections.MAXENT.Phillips.all.2050.rcp85_GF) / 10
 
 
 #HG
@@ -1750,63 +1718,10 @@ projections.FDA.all.2050.rcp85_HG <-
 projections.FDA.mean.2050.rcp85_HG <-
   mean(projections.FDA.all.2050.rcp85_HG) / 10
 
-projections.MAXENT.all.2050.rcp85_HG <-
+projections.MAXENT.Phillips.all.2050.rcp85_HG <-
   subset(projections.2050.rcp85_2_HG, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_HG)))
-projections.MAXENT.mean.2050.rcp85_HG <-
-  mean(projections.MAXENT.all.2050.rcp85_HG) / 10
-
-
-#IP
-projections.RF.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_1_IP, grep("RF", names(projections.2050.rcp85_1_IP)))
-projections.RF.mean.2050.rcp85_IP <-
-  mean(projections.RF.all.2050.rcp85_IP) / 10
-
-projections.GBM.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_1_IP, grep("GBM", names(projections.2050.rcp85_1_IP)))
-projections.GBM.mean.2050.rcp85_IP <-
-  mean(projections.GBM.all.2050.rcp85_IP) / 10
-
-projections.CTA.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_1_IP, grep("CTA", names(projections.2050.rcp85_1_IP)))
-projections.CTA.mean.2050.rcp85_IP <-
-  mean(projections.CTA.all.2050.rcp85_IP) / 10
-
-projections.GLM.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_2_IP, grep("GLM", names(projections.2050.rcp85_2_IP)))
-projections.GLM.mean.2050.rcp85_IP <-
-  mean(projections.GLM.all.2050.rcp85_IP) / 10
-
-projections.GAM.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_2_IP, grep("GAM", names(projections.2050.rcp85_2_IP)))
-projections.GAM.mean.2050.rcp85_IP <-
-  mean(projections.GAM.all.2050.rcp85_IP) / 10
-
-projections.ANN.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_2_IP, grep("ANN", names(projections.2050.rcp85_2_IP)))
-projections.ANN.mean.2050.rcp85_IP <-
-  mean(projections.ANN.all.2050.rcp85_IP) / 10
-
-projections.SRE.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_2_IP, grep("SRE", names(projections.2050.rcp85_2_IP)))
-projections.SRE.mean.2050.rcp85_IP <-
-  mean(projections.SRE.all.2050.rcp85_IP) / 10
-
-projections.MARS.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_2_IP, grep("MARS", names(projections.2050.rcp85_2_IP)))
-projections.MARS.mean.2050.rcp85_IP <-
-  mean(projections.MARS.all.2050.rcp85_IP) / 10
-
-projections.FDA.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_2_IP, grep("FDA", names(projections.2050.rcp85_2_IP)))
-projections.FDA.mean.2050.rcp85_IP <-
-  mean(projections.FDA.all.2050.rcp85_IP) / 10
-
-projections.MAXENT.all.2050.rcp85_IP <-
-  subset(projections.2050.rcp85_2_IP, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_IP)))
-projections.MAXENT.mean.2050.rcp85_IP <-
-  mean(projections.MAXENT.all.2050.rcp85_IP) / 10
-
+projections.MAXENT.Phillips.mean.2050.rcp85_HG <-
+  mean(projections.MAXENT.Phillips.all.2050.rcp85_HG) / 10
 
 #MC
 projections.RF.all.2050.rcp85_MC <-
@@ -1854,10 +1769,10 @@ projections.FDA.all.2050.rcp85_MC <-
 projections.FDA.mean.2050.rcp85_MC <-
   mean(projections.FDA.all.2050.rcp85_MC) / 10
 
-projections.MAXENT.all.2050.rcp85_MC <-
+projections.MAXENT.Phillips.all.2050.rcp85_MC <-
   subset(projections.2050.rcp85_2_MC, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_MC)))
-projections.MAXENT.mean.2050.rcp85_MC <-
-  mean(projections.MAXENT.all.2050.rcp85_MC) / 10
+projections.MAXENT.Phillips.mean.2050.rcp85_MC <-
+  mean(projections.MAXENT.Phillips.all.2050.rcp85_MC) / 10
 
 
 #MR
@@ -1906,10 +1821,10 @@ projections.FDA.all.2050.rcp85_MR <-
 projections.FDA.mean.2050.rcp85_MR <-
   mean(projections.FDA.all.2050.rcp85_MR) / 10
 
-projections.MAXENT.all.2050.rcp85_MR <-
+projections.MAXENT.Phillips.all.2050.rcp85_MR <-
   subset(projections.2050.rcp85_2_MR, grep("MAXENT.Phillips", names(projections.2050.rcp85_2_MR)))
-projections.MAXENT.mean.2050.rcp85_MR <-
-  mean(projections.MAXENT.all.2050.rcp85_MR) / 10
+projections.MAXENT.Phillips.mean.2050.rcp85_MR <-
+  mean(projections.MAXENT.Phillips.all.2050.rcp85_MR) / 10
 
 
 save.image()
@@ -1918,7 +1833,7 @@ save.image()
 ##############################################################
 ####### CONSENSO MÉDIO ENTRE OS ALGORITMOS SELECIONADOS ######
 ##############################################################
-#GCMs: CC, CM, CS, FG, GF, HG, IP, MC, MR
+#GCMs: CC, CM, CS, FG, GF, HG, MC, MR
 
 #ATENÇÃO: MANTENHA SOMENTE OS ALGORITMOS SELECIONADOS
 
@@ -1928,7 +1843,7 @@ projections.all.mean.2050.rcp85_CC <-
   mean(
     projections.RF.mean.2050.rcp85_CC + projections.GBM.mean.2050.rcp85_CC +
       projections.CTA.mean.2050.rcp85_CC + projections.GLM.mean.2050.rcp85_CC + projections.GAM.mean.2050.rcp85_CC +
-      projections.ANN.mean.2050.rcp85_CC + projections.SRE.mean.2050.rcp85_CC + projections.MARS.mean.2050.rcp85_CC + projections.FDA.mean.2050.rcp85_CC + projections.MAXENT.mean.2050.rcp85_CC
+      projections.ANN.mean.2050.rcp85_CC + projections.SRE.mean.2050.rcp85_CC + projections.MARS.mean.2050.rcp85_CC + projections.FDA.mean.2050.rcp85_CC + projections.MAXENT.Phillips.mean.2050.rcp85_CC
   )
 writeRaster(projections.all.mean.2050.rcp85_CC,
             filename = "Future Climate - 2050_rcp8.5_CC.tif",
@@ -1940,11 +1855,11 @@ projections.all.mean.2050.rcp85_CM <-
     projections.RF.mean.2050.rcp85_CM + projections.GBM.mean.2050.rcp85_CM +
       projections.CTA.mean.2050.rcp85_CM + projections.GLM.mean.2050.rcp85_CM + projections.GAM.mean.2050.rcp85_CM +
       projections.ANN.mean.2050.rcp85_CM + projections.SRE.mean.2050.rcp85_CM +
-      projections.MARS.mean.2050.rcp85_CM + projections.FDA.mean.2050.rcp85_CM + projections.MAXENT.mean.2050.rcp85_CM
+      projections.MARS.mean.2050.rcp85_CM + projections.FDA.mean.2050.rcp85_CM + projections.MAXENT.Phillips.mean.2050.rcp85_CM
   )
 writeRaster(projections.all.mean.2050.rcp85_CM,
-            filename = "Future Climate - 2050_rcp8.5_CM.asc",
-            format = "ascii")
+            filename = "Future Climate - 2050_rcp8.5_CM.tif",
+            format = "GTiff")
 
 #CS
 projections.all.mean.2050.rcp85_CS <-
@@ -1952,11 +1867,11 @@ projections.all.mean.2050.rcp85_CS <-
     projections.RF.mean.2050.rcp85_CS + projections.GBM.mean.2050.rcp85_CS +
       projections.CTA.mean.2050.rcp85_CS + projections.GLM.mean.2050.rcp85_CS + projections.GAM.mean.2050.rcp85_CS +
       projections.ANN.mean.2050.rcp85_CS + projections.SRE.mean.2050.rcp85_CS +
-      projections.MARS.mean.2050.rcp85_CS + projections.FDA.mean.2050.rcp85_CS + projections.MAXENT.mean.2050.rcp85_CS
+      projections.MARS.mean.2050.rcp85_CS + projections.FDA.mean.2050.rcp85_CS + projections.MAXENT.Phillips.mean.2050.rcp85_CS
   )
 writeRaster(projections.all.mean.2050.rcp85_CS,
-            filename = "Future Climate - 2050_rcp8.5_CS.asc",
-            format = "ascii")
+            filename = "Future Climate - 2050_rcp8.5_CS.tif",
+            format = "GTiff")
 
 #FG
 projections.all.mean.2050.rcp85_FG <-
@@ -1964,11 +1879,11 @@ projections.all.mean.2050.rcp85_FG <-
     projections.RF.mean.2050.rcp85_FG + projections.GBM.mean.2050.rcp85_FG +
       projections.CTA.mean.2050.rcp85_FG + projections.GLM.mean.2050.rcp85_FG + projections.GAM.mean.2050.rcp85_FG +
       projections.ANN.mean.2050.rcp85_FG + projections.SRE.mean.2050.rcp85_FG +
-      projections.MARS.mean.2050.rcp85_FG + projections.FDA.mean.2050.rcp85_FG + projections.MAXENT.mean.2050.rcp85_FG
+      projections.MARS.mean.2050.rcp85_FG + projections.FDA.mean.2050.rcp85_FG + projections.MAXENT.Phillips.mean.2050.rcp85_FG
   )
 writeRaster(projections.all.mean.2050.rcp85_FG,
-            filename = "Future Climate - 2050_rcp8.5_FG.asc",
-            format = "ascii")
+            filename = "Future Climate - 2050_rcp8.5_FG.tif",
+            format = "GTiff")
 
 #GF
 projections.all.mean.2050.rcp85_GF <-
@@ -1976,11 +1891,11 @@ projections.all.mean.2050.rcp85_GF <-
     projections.RF.mean.2050.rcp85_GF + projections.GBM.mean.2050.rcp85_GF +
       projections.CTA.mean.2050.rcp85_GF + projections.GLM.mean.2050.rcp85_GF + projections.GAM.mean.2050.rcp85_GF +
       projections.ANN.mean.2050.rcp85_GF + projections.SRE.mean.2050.rcp85_GF +
-      projections.MARS.mean.2050.rcp85_GF + projections.FDA.mean.2050.rcp85_GF + projections.MAXENT.mean.2050.rcp85_GF
+      projections.MARS.mean.2050.rcp85_GF + projections.FDA.mean.2050.rcp85_GF + projections.MAXENT.Phillips.mean.2050.rcp85_GF
   )
 writeRaster(projections.all.mean.2050.rcp85_GF,
-            filename = "Future Climate - 2050_rcp8.5_GF.asc",
-            format = "ascii")
+            filename = "Future Climate - 2050_rcp8.5_GF.tif",
+            format = "GTiff")
 
 #HG
 projections.all.mean.2050.rcp85_HG <-
@@ -1988,23 +1903,11 @@ projections.all.mean.2050.rcp85_HG <-
     projections.RF.mean.2050.rcp85_HG + projections.GBM.mean.2050.rcp85_HG +
       projections.CTA.mean.2050.rcp85_HG + projections.GLM.mean.2050.rcp85_HG + projections.GAM.mean.2050.rcp85_HG +
       projections.ANN.mean.2050.rcp85_HG + projections.SRE.mean.2050.rcp85_HG +
-      projections.MARS.mean.2050.rcp85_HG + projections.FDA.mean.2050.rcp85_HG + projections.MAXENT.mean.2050.rcp85_HG
+      projections.MARS.mean.2050.rcp85_HG + projections.FDA.mean.2050.rcp85_HG + projections.MAXENT.Phillips.mean.2050.rcp85_HG
   )
 writeRaster(projections.all.mean.2050.rcp85_HG,
-            filename = "Future Climate - 2050_rcp8.5_HG.asc",
-            format = "ascii")
-
-#IP
-projections.all.mean.2050.rcp85_IP <-
-  mean(
-    projections.RF.mean.2050.rcp85_IP + projections.GBM.mean.2050.rcp85_IP +
-      projections.CTA.mean.2050.rcp85_IP + projections.GLM.mean.2050.rcp85_IP + projections.GAM.mean.2050.rcp85_IP +
-      projections.ANN.mean.2050.rcp85_IP + projections.SRE.mean.2050.rcp85_IP +
-      projections.MARS.mean.2050.rcp85_IP + projections.FDA.mean.2050.rcp85_IP + projections.MAXENT.mean.2050.rcp85_IP
-  )
-writeRaster(projections.all.mean.2050.rcp85_IP,
-            filename = "Future Climate - 2050_rcp8.5_IP.asc",
-            format = "ascii")
+            filename = "Future Climate - 2050_rcp8.5_HG.tif",
+            format = "GTiff")
 
 #MC
 projections.all.mean.2050.rcp85_MC <-
@@ -2012,11 +1915,11 @@ projections.all.mean.2050.rcp85_MC <-
     projections.RF.mean.2050.rcp85_MC + projections.GBM.mean.2050.rcp85_MC +
       projections.CTA.mean.2050.rcp85_MC + projections.GLM.mean.2050.rcp85_MC + projections.GAM.mean.2050.rcp85_MC +
       projections.ANN.mean.2050.rcp85_MC + projections.SRE.mean.2050.rcp85_MC +
-      projections.MARS.mean.2050.rcp85_MC + projections.FDA.mean.2050.rcp85_MC + projections.MAXENT.mean.2050.rcp85_MC
+      projections.MARS.mean.2050.rcp85_MC + projections.FDA.mean.2050.rcp85_MC + projections.MAXENT.Phillips.mean.2050.rcp85_MC
   )
 writeRaster(projections.all.mean.2050.rcp85_MC,
-            filename = "Future Climate - 2050_rcp8.5_MC.asc",
-            format = "ascii")
+            filename = "Future Climate - 2050_rcp8.5_MC.tif",
+            format = "GTiff")
 
 #MR
 projections.all.mean.2050.rcp85_MR <-
@@ -2024,11 +1927,11 @@ projections.all.mean.2050.rcp85_MR <-
     projections.RF.mean.2050.rcp85_MR + projections.GBM.mean.2050.rcp85_MR +
       projections.CTA.mean.2050.rcp85_MR + projections.GLM.mean.2050.rcp85_MR + projections.GAM.mean.2050.rcp85_MR +
       projections.ANN.mean.2050.rcp85_MR + projections.SRE.mean.2050.rcp85_MR +
-      projections.MARS.mean.2050.rcp85_MR + projections.FDA.mean.2050.rcp85_MR + projections.MAXENT.mean.2050.rcp85_MR
+      projections.MARS.mean.2050.rcp85_MR + projections.FDA.mean.2050.rcp85_MR + projections.MAXENT.Phillips.mean.2050.rcp85_MR
   )
 writeRaster(projections.all.mean.2050.rcp85_MR,
-            filename = "Future Climate - 2050_rcp8.5_MR.asc",
-            format = "ascii")
+            filename = "Future Climate - 2050_rcp8.5_MR.tif",
+            format = "GTiff")
 
 
 #Ensemble 2050 - rcp8.5
@@ -2040,7 +1943,6 @@ ensemble2050rcp8.5 <-
     projections.all.mean.2050.rcp85_FG,
     projections.all.mean.2050.rcp85_GF,
     projections.all.mean.2050.rcp85_HG,
-    projections.all.mean.2050.rcp85_IP,
     projections.all.mean.2050.rcp85_MC,
     projections.all.mean.2050.rcp85_MR
   ) / 10
@@ -2088,10 +1990,10 @@ projections.MARS.mean.2050.rcp85_CC_bin <-
 class(projections.MARS.mean.2050.rcp85_CC_bin)
 summary(values(projections.MARS.mean.2050.rcp85_CC_bin))
 
-projections.MAXENT.mean.2050.rcp85_CC_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_CC, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_CC_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_CC_bin))
+projections.MAXENT.Phillips.mean.2050.rcp85_CC_bin <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean.2050.rcp85_CC, th_MAXENT.Phillips) #Calcular th
+class(projections.MAXENT.Phillips.mean.2050.rcp85_CC_bin)
+summary(values(projections.MAXENT.Phillips.mean.2050.rcp85_CC_bin))
 
 projections.RF.mean.2050.rcp85_CC_bin <-
   BinaryTransformation(projections.RF.mean.2050.rcp85_CC, th_RF) #Calcular th
@@ -2107,7 +2009,7 @@ projections.binary.mean_2050.rcp85_CC <-
   mean(
     projections.ANN.mean.2050.rcp85_CC_bin + projections.CTA.mean.2050.rcp85_CC_bin + projections.FDA.mean.2050.rcp85_CC_bin +
       projections.GAM.mean.2050.rcp85_CC_bin + projections.GBM.mean.2050.rcp85_CC_bin + projections.GLM.mean.2050.rcp85_CC_bin +
-      projections.MARS.mean.2050.rcp85_CC_bin + projections.MAXENT.mean.2050.rcp85_CC_bin + projections.RF.mean.2050.rcp85_CC_bin +
+      projections.MARS.mean.2050.rcp85_CC_bin + projections.MAXENT.Phillips.mean.2050.rcp85_CC_bin + projections.RF.mean.2050.rcp85_CC_bin +
       projections.SRE.mean.2050.rcp85_CC_bin
   )
 
@@ -2152,10 +2054,10 @@ projections.MARS.mean.2050.rcp85_CM_bin <-
 class(projections.MARS.mean.2050.rcp85_CM_bin)
 summary(values(projections.MARS.mean.2050.rcp85_CM_bin))
 
-projections.MAXENT.mean.2050.rcp85_CM_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_CM, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_CM_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_CM_bin))
+projections.MAXENT.Phillips.mean.2050.rcp85_CM_bin <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean.2050.rcp85_CM, th_MAXENT.Phillips) #Calcular th
+class(projections.MAXENT.Phillips.mean.2050.rcp85_CM_bin)
+summary(values(projections.MAXENT.Phillips.mean.2050.rcp85_CM_bin))
 
 projections.RF.mean.2050.rcp85_CM_bin <-
   BinaryTransformation(projections.RF.mean.2050.rcp85_CM, th_RF) #Calcular th
@@ -2171,12 +2073,12 @@ projections.binary.mean_2050.rcp85_CM <-
   mean(
     projections.ANN.mean.2050.rcp85_CM_bin + projections.CTA.mean.2050.rcp85_CM_bin + projections.FDA.mean.2050.rcp85_CM_bin +
       projections.GAM.mean.2050.rcp85_CM_bin + projections.GBM.mean.2050.rcp85_CM_bin + projections.GLM.mean.2050.rcp85_CM_bin +
-      projections.MARS.mean.2050.rcp85_CM_bin + projections.MAXENT.mean.2050.rcp85_CM_bin + projections.RF.mean.2050.rcp85_CM_bin +
+      projections.MARS.mean.2050.rcp85_CM_bin + projections.MAXENT.Phillips.mean.2050.rcp85_CM_bin + projections.RF.mean.2050.rcp85_CM_bin +
       projections.SRE.mean.2050.rcp85_CM_bin
   )
 writeRaster(projections.binary.mean_2050.rcp85_CM,
-            filename = "Future Climate_binary_2050.rcp85_CM.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_CM.tif",
+            format = "GTiff")
 
 
 ########################
@@ -2215,10 +2117,10 @@ projections.MARS.mean.2050.rcp85_CS_bin <-
 class(projections.MARS.mean.2050.rcp85_CS_bin)
 summary(values(projections.MARS.mean.2050.rcp85_CS_bin))
 
-projections.MAXENT.mean.2050.rcp85_CS_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_CS, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_CS_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_CS_bin))
+projections.MAXENT.Phillips.mean.2050.rcp85_CS_bin <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean.2050.rcp85_CS, th_MAXENT.Phillips) #Calcular th
+class(projections.MAXENT.Phillips.mean.2050.rcp85_CS_bin)
+summary(values(projections.MAXENT.Phillips.mean.2050.rcp85_CS_bin))
 
 projections.RF.mean.2050.rcp85_CS_bin <-
   BinaryTransformation(projections.RF.mean.2050.rcp85_CS, th_RF) #Calcular th
@@ -2234,13 +2136,13 @@ projections.binary.mean_2050.rcp85_CS <-
   mean(
     projections.ANN.mean.2050.rcp85_CS_bin + projections.CTA.mean.2050.rcp85_CS_bin + projections.FDA.mean.2050.rcp85_CS_bin +
       projections.GAM.mean.2050.rcp85_CS_bin + projections.GBM.mean.2050.rcp85_CS_bin + projections.GLM.mean.2050.rcp85_CS_bin +
-      projections.MARS.mean.2050.rcp85_CS_bin + projections.MAXENT.mean.2050.rcp85_CS_bin + projections.RF.mean.2050.rcp85_CS_bin +
+      projections.MARS.mean.2050.rcp85_CS_bin + projections.MAXENT.Phillips.mean.2050.rcp85_CS_bin + projections.RF.mean.2050.rcp85_CS_bin +
       projections.SRE.mean.2050.rcp85_CS_bin
   )
 
 writeRaster(projections.binary.mean_2050.rcp85_CS,
-            filename = "Future Climate_binary_2050.rcp85_CS.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_CS.tif",
+            format = "GTiff")
 
 
 ##########################
@@ -2279,10 +2181,10 @@ projections.MARS.mean.2050.rcp85_FG_bin <-
 class(projections.MARS.mean.2050.rcp85_FG_bin)
 summary(values(projections.MARS.mean.2050.rcp85_FG_bin))
 
-projections.MAXENT.mean.2050.rcp85_FG_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_FG, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_FG_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_FG_bin))
+projections.MAXENT.Phillips.mean.2050.rcp85_FG_bin <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean.2050.rcp85_FG, th_MAXENT.Phillips) #Calcular th
+class(projections.MAXENT.Phillips.mean.2050.rcp85_FG_bin)
+summary(values(projections.MAXENT.Phillips.mean.2050.rcp85_FG_bin))
 
 projections.RF.mean.2050.rcp85_FG_bin <-
   BinaryTransformation(projections.RF.mean.2050.rcp85_FG, th_RF) #Calcular th
@@ -2298,13 +2200,13 @@ projections.binary.mean_2050.rcp85_FG <-
   mean(
     projections.ANN.mean.2050.rcp85_FG_bin + projections.CTA.mean.2050.rcp85_FG_bin + projections.FDA.mean.2050.rcp85_FG_bin +
       projections.GAM.mean.2050.rcp85_FG_bin + projections.GBM.mean.2050.rcp85_FG_bin + projections.GLM.mean.2050.rcp85_FG_bin +
-      projections.MARS.mean.2050.rcp85_FG_bin + projections.MAXENT.mean.2050.rcp85_FG_bin + projections.RF.mean.2050.rcp85_FG_bin +
+      projections.MARS.mean.2050.rcp85_FG_bin + projections.MAXENT.Phillips.mean.2050.rcp85_FG_bin + projections.RF.mean.2050.rcp85_FG_bin +
       projections.SRE.mean.2050.rcp85_FG_bin
   )
 
 writeRaster(projections.binary.mean_2050.rcp85_FG,
-            filename = "Future Climate_binary_2050.rcp85_FG.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_FG.tif",
+            format = "GTiff")
 
 
 #########################
@@ -2343,10 +2245,10 @@ projections.MARS.mean.2050.rcp85_GF_bin <-
 class(projections.MARS.mean.2050.rcp85_GF_bin)
 summary(values(projections.MARS.mean.2050.rcp85_GF_bin))
 
-projections.MAXENT.mean.2050.rcp85_GF_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_GF, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_GF_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_GF_bin))
+projections.MAXENT.Phillips.mean.2050.rcp85_GF_bin <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean.2050.rcp85_GF, th_MAXENT.Phillips) #Calcular th
+class(projections.MAXENT.Phillips.mean.2050.rcp85_GF_bin)
+summary(values(projections.MAXENT.Phillips.mean.2050.rcp85_GF_bin))
 
 projections.RF.mean.2050.rcp85_GF_bin <-
   BinaryTransformation(projections.RF.mean.2050.rcp85_GF, th_RF) #Calcular th
@@ -2362,13 +2264,13 @@ projections.binary.mean_2050.rcp85_GF <-
   mean(
     projections.ANN.mean.2050.rcp85_GF_bin + projections.CTA.mean.2050.rcp85_GF_bin + projections.FDA.mean.2050.rcp85_GF_bin +
       projections.GAM.mean.2050.rcp85_GF_bin + projections.GBM.mean.2050.rcp85_GF_bin + projections.GLM.mean.2050.rcp85_GF_bin +
-      projections.MARS.mean.2050.rcp85_GF_bin + projections.MAXENT.mean.2050.rcp85_GF_bin + projections.RF.mean.2050.rcp85_GF_bin +
+      projections.MARS.mean.2050.rcp85_GF_bin + projections.MAXENT.Phillips.mean.2050.rcp85_GF_bin + projections.RF.mean.2050.rcp85_GF_bin +
       projections.SRE.mean.2050.rcp85_GF_bin
   )
 
 writeRaster(projections.binary.mean_2050.rcp85_GF,
-            filename = "Future Climate_binary_2050.rcp85_GF.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_GF.tif",
+            format = "GTiff")
 
 
 ##########################
@@ -2407,10 +2309,10 @@ projections.MARS.mean.2050.rcp85_HG_bin <-
 class(projections.MARS.mean.2050.rcp85_HG_bin)
 summary(values(projections.MARS.mean.2050.rcp85_HG_bin))
 
-projections.MAXENT.mean.2050.rcp85_HG_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_HG, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_HG_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_HG_bin))
+projections.MAXENT.Phillips.mean.2050.rcp85_HG_bin <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean.2050.rcp85_HG, th_MAXENT.Phillips) #Calcular th
+class(projections.MAXENT.Phillips.mean.2050.rcp85_HG_bin)
+summary(values(projections.MAXENT.Phillips.mean.2050.rcp85_HG_bin))
 
 projections.RF.mean.2050.rcp85_HG_bin <-
   BinaryTransformation(projections.RF.mean.2050.rcp85_HG, th_RF) #Calcular th
@@ -2426,78 +2328,13 @@ projections.binary.mean_2050.rcp85_HG <-
   mean(
     projections.ANN.mean.2050.rcp85_HG_bin + projections.CTA.mean.2050.rcp85_HG_bin + projections.FDA.mean.2050.rcp85_HG_bin +
       projections.GAM.mean.2050.rcp85_HG_bin + projections.GBM.mean.2050.rcp85_HG_bin + projections.GLM.mean.2050.rcp85_HG_bin +
-      projections.MARS.mean.2050.rcp85_HG_bin + projections.MAXENT.mean.2050.rcp85_HG_bin + projections.RF.mean.2050.rcp85_HG_bin +
+      projections.MARS.mean.2050.rcp85_HG_bin + projections.MAXENT.Phillips.mean.2050.rcp85_HG_bin + projections.RF.mean.2050.rcp85_HG_bin +
       projections.SRE.mean.2050.rcp85_HG_bin
   )
 
 writeRaster(projections.binary.mean_2050.rcp85_HG,
-            filename = "Future Climate_binary_2050.rcp85_HG.asc",
-            format = "ascii")
-
-
-#########################
-projections.CTA.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.CTA.mean.2050.rcp85_IP, th_CTA) #Calcular th
-class(projections.CTA.mean.2050.rcp85_IP_bin)
-summary(values(projections.CTA.mean.2050.rcp85_IP_bin))
-
-projections.GBM.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.GBM.mean.2050.rcp85_IP, th_GBM) #Calcular th
-class(projections.GBM.mean.2050.rcp85_IP_bin)
-summary(values(projections.GBM.mean.2050.rcp85_IP_bin))
-
-projections.ANN.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.ANN.mean.2050.rcp85_IP, th_ANN) #Calcular th
-class(projections.ANN.mean.2050.rcp85_IP_bin)
-summary(values(projections.ANN.mean.2050.rcp85_IP_bin))
-
-projections.FDA.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.FDA.mean.2050.rcp85_IP, th_FDA) #Calcular th
-class(projections.FDA.mean.2050.rcp85_IP_bin)
-summary(values(projections.FDA.mean.2050.rcp85_IP_bin))
-
-projections.GAM.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.GAM.mean.2050.rcp85_IP, th_GAM) #Calcular th
-class(projections.GAM.mean.2050.rcp85_IP_bin)
-summary(values(projections.GAM.mean.2050.rcp85_IP_bin))
-
-projections.GLM.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.GLM.mean.2050.rcp85_IP, th_GLM) #Calcular th
-class(projections.GLM.mean.2050.rcp85_IP_bin)
-summary(values(projections.GLM.mean.2050.rcp85_IP_bin))
-
-projections.MARS.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.MARS.mean.2050.rcp85_IP, th_MARS) #Calcular th
-class(projections.MARS.mean.2050.rcp85_IP_bin)
-summary(values(projections.MARS.mean.2050.rcp85_IP_bin))
-
-projections.MAXENT.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_IP, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_IP_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_IP_bin))
-
-projections.RF.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.RF.mean.2050.rcp85_IP, th_RF) #Calcular th
-class(projections.RF.mean.2050.rcp85_IP_bin)
-summary(values(projections.RF.mean.2050.rcp85_IP_bin))
-
-projections.SRE.mean.2050.rcp85_IP_bin <-
-  BinaryTransformation(projections.SRE.mean.2050.rcp85_IP, th_SRE) #Calcular th
-class(projections.SRE.mean.2050.rcp85_IP_bin)
-summary(values(projections.SRE.mean.2050.rcp85_IP_bin))
-
-projections.binary.mean_2050.rcp85_IP <-
-  mean(
-    projections.ANN.mean.2050.rcp85_IP_bin + projections.CTA.mean.2050.rcp85_IP_bin + projections.FDA.mean.2050.rcp85_IP_bin +
-      projections.GAM.mean.2050.rcp85_IP_bin + projections.GBM.mean.2050.rcp85_IP_bin + projections.GLM.mean.2050.rcp85_IP_bin +
-      projections.MARS.mean.2050.rcp85_IP_bin + projections.MAXENT.mean.2050.rcp85_IP_bin + projections.RF.mean.2050.rcp85_IP_bin +
-      projections.SRE.mean.2050.rcp85_IP_bin
-  )
-
-writeRaster(projections.binary.mean_2050.rcp85_IP,
-            filename = "Future Climate_binary_2050.rcp85_IP.asc",
-            format = "ascii")
-
+            filename = "Future Climate_binary_2050.rcp85_HG.tif",
+            format = "GTiff")
 
 #########################
 projections.CTA.mean.2050.rcp85_MC_bin <-
@@ -2535,10 +2372,10 @@ projections.MARS.mean.2050.rcp85_MC_bin <-
 class(projections.MARS.mean.2050.rcp85_MC_bin)
 summary(values(projections.MARS.mean.2050.rcp85_MC_bin))
 
-projections.MAXENT.mean.2050.rcp85_MC_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_MC, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_MC_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_MC_bin))
+projections.MAXENT.Phillips.mean.2050.rcp85_MC_bin <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean.2050.rcp85_MC, th_MAXENT.Phillips) #Calcular th
+class(projections.MAXENT.Phillips.mean.2050.rcp85_MC_bin)
+summary(values(projections.MAXENT.Phillips.mean.2050.rcp85_MC_bin))
 
 projections.RF.mean.2050.rcp85_MC_bin <-
   BinaryTransformation(projections.RF.mean.2050.rcp85_MC, th_RF) #Calcular th
@@ -2554,13 +2391,13 @@ projections.binary.mean_2050.rcp85_MC <-
   mean(
     projections.ANN.mean.2050.rcp85_MC_bin + projections.CTA.mean.2050.rcp85_MC_bin + projections.FDA.mean.2050.rcp85_MC_bin +
       projections.GAM.mean.2050.rcp85_MC_bin + projections.GBM.mean.2050.rcp85_MC_bin + projections.GLM.mean.2050.rcp85_MC_bin +
-      projections.MARS.mean.2050.rcp85_MC_bin + projections.MAXENT.mean.2050.rcp85_MC_bin + projections.RF.mean.2050.rcp85_MC_bin +
+      projections.MARS.mean.2050.rcp85_MC_bin + projections.MAXENT.Phillips.mean.2050.rcp85_MC_bin + projections.RF.mean.2050.rcp85_MC_bin +
       projections.SRE.mean.2050.rcp85_MC_bin
   )
 
 writeRaster(projections.binary.mean_2050.rcp85_MC,
-            filename = "Future Climate_binary_2050.rcp85_MC.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_MC.tif",
+            format = "GTiff")
 
 
 ##########################
@@ -2599,10 +2436,10 @@ projections.MARS.mean.2050.rcp85_MR_bin <-
 class(projections.MARS.mean.2050.rcp85_MR_bin)
 summary(values(projections.MARS.mean.2050.rcp85_MR_bin))
 
-projections.MAXENT.mean.2050.rcp85_MR_bin <-
-  BinaryTransformation(projections.MAXENT.mean.2050.rcp85_MR, th_MAXENT.Phillips) #Calcular th
-class(projections.MAXENT.mean.2050.rcp85_MR_bin)
-summary(values(projections.MAXENT.mean.2050.rcp85_MR_bin))
+projections.MAXENT.Phillips.mean.2050.rcp85_MR_bin <-
+  BinaryTransformation(projections.MAXENT.Phillips.mean.2050.rcp85_MR, th_MAXENT.Phillips) #Calcular th
+class(projections.MAXENT.Phillips.mean.2050.rcp85_MR_bin)
+summary(values(projections.MAXENT.Phillips.mean.2050.rcp85_MR_bin))
 
 projections.RF.mean.2050.rcp85_MR_bin <-
   BinaryTransformation(projections.RF.mean.2050.rcp85_MR, th_RF) #Calcular th
@@ -2618,16 +2455,16 @@ projections.binary.mean_2050.rcp85_MR <-
   mean(
     projections.ANN.mean.2050.rcp85_MR_bin + projections.CTA.mean.2050.rcp85_MR_bin + projections.FDA.mean.2050.rcp85_MR_bin +
       projections.GAM.mean.2050.rcp85_MR_bin + projections.GBM.mean.2050.rcp85_MR_bin + projections.GLM.mean.2050.rcp85_MR_bin +
-      projections.MARS.mean.2050.rcp85_MR_bin + projections.MAXENT.mean.2050.rcp85_MR_bin + projections.RF.mean.2050.rcp85_MR_bin +
+      projections.MARS.mean.2050.rcp85_MR_bin + projections.MAXENT.Phillips.mean.2050.rcp85_MR_bin + projections.RF.mean.2050.rcp85_MR_bin +
       projections.SRE.mean.2050.rcp85_MR_bin
   )
 
 writeRaster(projections.binary.mean_2050.rcp85_MR,
-            filename = "Future Climate_binary_2050.rcp85_MR.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_MR.tif",
+            format = "GTiff")
 
 
-######Consensos contínuos e binarios - 2050.rcp85#######
+######Consensos cont??nuos e binarios - 2050.rcp85#######
 projections.mean_2050_RF <-
   mean(
     projections.RF.mean.2050.rcp85_CC,
@@ -2636,18 +2473,17 @@ projections.mean_2050_RF <-
     projections.RF.mean.2050.rcp85_FG,
     projections.RF.mean.2050.rcp85_GF,
     projections.RF.mean.2050.rcp85_HG,
-    projections.RF.mean.2050.rcp85_IP,
     projections.RF.mean.2050.rcp85_MC,
     projections.RF.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_RF,
-            filename = "projections.mean_2050_RF.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_RF.tif",
+            format = "GTiff")
 projections.binary.mean_2050_RF <-
   BinaryTransformation(projections.mean_2050_RF, th_RF)
 writeRaster(projections.binary.mean_2050_RF,
-            filename = "Future Climate_binary_2050.rcp85_RF.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_RF.tif",
+            format = "GTiff")
 
 projections.mean_2050_ANN <-
   mean(
@@ -2657,18 +2493,17 @@ projections.mean_2050_ANN <-
     projections.ANN.mean.2050.rcp85_FG,
     projections.ANN.mean.2050.rcp85_GF,
     projections.ANN.mean.2050.rcp85_HG,
-    projections.ANN.mean.2050.rcp85_IP,
     projections.ANN.mean.2050.rcp85_MC,
     projections.ANN.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_ANN,
-            filename = "projections.mean_2050_ANN.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_ANN.tif",
+            format = "GTiff")
 projections.binary.mean_2050_ANN <-
   BinaryTransformation(projections.mean_2050_ANN, th_ANN)
 writeRaster(projections.binary.mean_2050_ANN,
-            filename = "Future Climate_binary_2050.rcp85_ANN.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_ANN.tif",
+            format = "GTiff")
 
 projections.mean_2050_CTA <-
   mean(
@@ -2678,18 +2513,17 @@ projections.mean_2050_CTA <-
     projections.CTA.mean.2050.rcp85_FG,
     projections.CTA.mean.2050.rcp85_GF,
     projections.CTA.mean.2050.rcp85_HG,
-    projections.CTA.mean.2050.rcp85_IP,
     projections.CTA.mean.2050.rcp85_MC,
     projections.CTA.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_CTA,
-            filename = "projections.mean_2050_CTA.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_CTA.tif",
+            format = "GTiff")
 projections.binary.mean_2050_CTA <-
   BinaryTransformation(projections.mean_2050_CTA, th_CTA)
 writeRaster(projections.binary.mean_2050_CTA,
-            filename = "Future Climate_binary_2050.rcp85_CTA.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_CTA.tif",
+            format = "GTiff")
 
 projections.mean_2050_FDA <-
   mean(
@@ -2699,18 +2533,17 @@ projections.mean_2050_FDA <-
     projections.FDA.mean.2050.rcp85_FG,
     projections.FDA.mean.2050.rcp85_GF,
     projections.FDA.mean.2050.rcp85_HG,
-    projections.FDA.mean.2050.rcp85_IP,
     projections.FDA.mean.2050.rcp85_MC,
     projections.FDA.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_FDA,
-            filename = "projections.mean_2050_FDA.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_FDA.tif",
+            format = "GTiff")
 projections.binary.mean_2050_FDA <-
   BinaryTransformation(projections.mean_2050_FDA, th_FDA)
 writeRaster(projections.binary.mean_2050_FDA,
-            filename = "Future Climate_binary_2050.rcp85_FDA.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_FDA.tif",
+            format = "GTiff")
 
 projections.mean_2050_GAM <-
   mean(
@@ -2720,18 +2553,17 @@ projections.mean_2050_GAM <-
     projections.GAM.mean.2050.rcp85_FG,
     projections.GAM.mean.2050.rcp85_GF,
     projections.GAM.mean.2050.rcp85_HG,
-    projections.GAM.mean.2050.rcp85_IP,
     projections.GAM.mean.2050.rcp85_MC,
     projections.GAM.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_GAM,
-            filename = "projections.mean_2050_GAM.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_GAM.tif",
+            format = "GTiff")
 projections.binary.mean_2050_GAM <-
   BinaryTransformation(projections.mean_2050_GAM, th_GAM)
 writeRaster(projections.binary.mean_2050_GAM,
-            filename = "Future Climate_binary_2050.rcp85_GAM.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_GAM.tif",
+            format = "GTiff")
 
 projections.mean_2050_GBM <-
   mean(
@@ -2741,18 +2573,17 @@ projections.mean_2050_GBM <-
     projections.GBM.mean.2050.rcp85_FG,
     projections.GBM.mean.2050.rcp85_GF,
     projections.GBM.mean.2050.rcp85_HG,
-    projections.GBM.mean.2050.rcp85_IP,
     projections.GBM.mean.2050.rcp85_MC,
     projections.GBM.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_GBM,
-            filename = "projections.mean_2050_GBM.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_GBM.tif",
+            format = "GTiff")
 projections.binary.mean_2050_GBM <-
   BinaryTransformation(projections.mean_2050_GBM, th_GBM)
 writeRaster(projections.binary.mean_2050_GBM,
-            filename = "Future Climate_binary_2050.rcp85_GBM.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_GBM.tif",
+            format = "GTiff")
 
 projections.mean_2050_GLM <-
   mean(
@@ -2762,18 +2593,17 @@ projections.mean_2050_GLM <-
     projections.GLM.mean.2050.rcp85_FG,
     projections.GLM.mean.2050.rcp85_GF,
     projections.GLM.mean.2050.rcp85_HG,
-    projections.GLM.mean.2050.rcp85_IP,
     projections.GLM.mean.2050.rcp85_MC,
     projections.GLM.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_GLM,
-            filename = "projections.mean_2050_GLM.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_GLM.tif",
+            format = "GTiff")
 projections.binary.mean_2050_GLM <-
   BinaryTransformation(projections.mean_2050_GLM, th_GLM)
 writeRaster(projections.binary.mean_2050_GLM,
-            filename = "Future Climate_binary_2050.rcp85_GLM.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_GLM.tif",
+            format = "GTiff")
 
 projections.mean_2050_MARS <-
   mean(
@@ -2783,39 +2613,37 @@ projections.mean_2050_MARS <-
     projections.MARS.mean.2050.rcp85_FG,
     projections.MARS.mean.2050.rcp85_GF,
     projections.MARS.mean.2050.rcp85_HG,
-    projections.MARS.mean.2050.rcp85_IP,
     projections.MARS.mean.2050.rcp85_MC,
     projections.MARS.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_MARS,
-            filename = "projections.mean_2050_MARS.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_MARS.tif",
+            format = "GTiff")
 projections.binary.mean_2050_MARS <-
   BinaryTransformation(projections.mean_2050_MARS, th_MARS)
 writeRaster(projections.binary.mean_2050_MARS,
-            filename = "Future Climate_binary_2050.rcp85_MARS.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_MARS.tif",
+            format = "GTiff")
 
 projections.mean_2050_MAXENT <-
   mean(
-    projections.MAXENT.mean.2050.rcp85_CC,
-    projections.MAXENT.mean.2050.rcp85_CM,
-    projections.MAXENT.mean.2050.rcp85_CS,
-    projections.MAXENT.mean.2050.rcp85_FG,
-    projections.MAXENT.mean.2050.rcp85_GF,
-    projections.MAXENT.mean.2050.rcp85_HG,
-    projections.MAXENT.mean.2050.rcp85_IP,
-    projections.MAXENT.mean.2050.rcp85_MC,
-    projections.MAXENT.mean.2050.rcp85_MR
+    projections.MAXENT.Phillips.mean.2050.rcp85_CC,
+    projections.MAXENT.Phillips.mean.2050.rcp85_CM,
+    projections.MAXENT.Phillips.mean.2050.rcp85_CS,
+    projections.MAXENT.Phillips.mean.2050.rcp85_FG,
+    projections.MAXENT.Phillips.mean.2050.rcp85_GF,
+    projections.MAXENT.Phillips.mean.2050.rcp85_HG,
+    projections.MAXENT.Phillips.mean.2050.rcp85_MC,
+    projections.MAXENT.Phillips.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_MAXENT,
-            filename = "projections.mean_2050_MAXENT.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_MAXENT.tif",
+            format = "GTiff")
 projections.binary.mean_2050_MAXENT <-
   BinaryTransformation(projections.mean_2050_MAXENT, th_MAXENT.Phillips)
 writeRaster(projections.binary.mean_2050_MAXENT,
-            filename = "Future Climate_binary_2050.rcp85_MAXENT.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_MAXENT.tif",
+            format = "GTiff")
 
 projections.mean_2050_SRE <-
   mean(
@@ -2825,40 +2653,37 @@ projections.mean_2050_SRE <-
     projections.SRE.mean.2050.rcp85_FG,
     projections.SRE.mean.2050.rcp85_GF,
     projections.SRE.mean.2050.rcp85_HG,
-    projections.SRE.mean.2050.rcp85_IP,
     projections.SRE.mean.2050.rcp85_MC,
     projections.SRE.mean.2050.rcp85_MR
   )
 writeRaster(projections.mean_2050_SRE,
-            filename = "projections.mean_2050_SRE.asc",
-            format = "ascii")
+            filename = "projections.mean_2050_SRE.tif",
+            format = "GTiff")
 projections.binary.mean_2050_SRE <-
   BinaryTransformation(projections.mean_2050_SRE, th_SRE)
 writeRaster(projections.binary.mean_2050_SRE,
-            filename = "Future Climate_binary_2050.rcp85_SRE.asc",
-            format = "ascii")
+            filename = "Future Climate_binary_2050.rcp85_SRE.tif",
+            format = "GTiff")
 
 
 # Mapas de consenso: binário médio
 projections.binary.mean_2050.rcp85 <-
   mean(
     projections.binary.mean_2050.rcp85_CC + projections.binary.mean_2050.rcp85_CM + projections.binary.mean_2050.rcp85_CS +
-      projections.binary.mean_2050.rcp85_FG + projections.binary.mean_2050.rcp85_GF + projections.binary.mean_2050.rcp85_HG +
-      projections.binary.mean_2050.rcp85_IP + projections.binary.mean_2050.rcp85_MC + projections.binary.mean_2050.rcp85_MR
+      projections.binary.mean_2050.rcp85_FG + projections.binary.mean_2050.rcp85_GF + projections.binary.mean_2050.rcp85_HG + 
+      projections.binary.mean_2050.rcp85_MC + projections.binary.mean_2050.rcp85_MR
   )
 writeRaster(projections.binary.mean_2050.rcp85,
-            filename = "Ensemble - Future Climate_Mean Binary_2050.rcp85.asc",
-            format = "ascii")
+            filename = "Ensemble - Future Climate_Mean Binary_2050.rcp85.tif",
+            format = "GTiff")
 
 # Mapas de consenso: binário final
 ensemble2050rcp8.5_bin <-
   BinaryTransformation(ensemble2050rcp8.5, th_mean)
 writeRaster(ensemble2050rcp8.5_bin,
-            filename = "Ensemble - Future Climate_Final Binary_2050_rcp8.5.asc",
-            format = "ascii")
+            filename = "Ensemble - Future Climate_Final Binary_2050_rcp8.5.tif",
+            format = "GTiff")
 
-
-save.image()
 
 
 #FIM-----------------------------------------------------------------------------### Daqui em diante, não proceder por enquanto.
