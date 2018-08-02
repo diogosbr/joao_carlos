@@ -27,5 +27,5 @@ bio50.85_MC <-  list.files("./Environmental Layers/CHELSA_Future-WD/MIROC5", pat
 bio50.85_MC
 
 # Criar as projeções
-pcaop = PCAProjection(BioStackFiles = bio.crop, LoadingFile = "joao", CompImpFile = "pca1",
+pcaop = PCAProjection(BioStackFiles = bio.crop, LoadingFile = "joao.csv", CompImpFile = "pca1.csv",
                       ProjectonStackFiles = bio50.85_MC, OutputFolder = "./PCA")
