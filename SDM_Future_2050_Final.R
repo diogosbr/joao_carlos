@@ -144,7 +144,7 @@ res(bio.crop)
 # Importando dados bióticos
 
 #spp<-read.table(file.choose(), header=T, sep=";")
-spp <- read.table("./testes.csv", header = T, sep = ";")
+spp <- read.table("./leandro.csv", header = T, sep = ";")
 dim(spp)
 head(spp, 10)
 
@@ -162,10 +162,10 @@ if (dir.exists("outputs") == F) {
   dir.create("outputs")
 }
 
-n.runs = 5 #numero de rodadas
+n.runs = 2 #numero de rodadas
 n.algo1 = 3 #numero de algoritmos
 n.algo2 = 7 #numero de algoritmos
-n.conj.pa2 = 5 #conjunto de pseudo-ausencias
+n.conj.pa2 = 2 #conjunto de pseudo-ausencias
 env.selected = bio.crop
 
 #-------------------------#
@@ -174,7 +174,7 @@ env.selected = bio.crop
 
 (ini = Sys.time())
 # for(especie in especies[1]) {
-foreach(especie = especies [1],
+foreach(especie = especies[1],
             .packages = c("raster", "biomod2", 'sp', "sdmvspecies", "filesstrings")) %dopar% {
   
     # criando tabela para uma especie
@@ -236,19 +236,19 @@ foreach(especie = especies [1],
     diretorio = paste0("Occurrence.", especie)
     
     
-    #Preparando para CTA, GBM e RF:
+    # Preparando para CTA, GBM e RF:
     sppBiomodData.PA.equal <- BIOMOD_FormatingData(
       resp.var = occurrence.resp,
       expl.var = env.selected,
       resp.xy = myRespXY,
       resp.name = diretorio,
-      PA.nb.rep = 1,
+      PA.nb.rep = 2,
       #número de datasets de pseudoausências
       PA.nb.absences = PA.number,
       #= número de pseudoausências = número de pontos espacialmente únicos
-      PA.strategy = "disk",
-      PA.dist.min = dist.min * 1000,
-      PA.dist.max = dist.mean * 1000
+      PA.strategy = "sre"
+      # PA.dist.min = dist.min * 1000,
+      # PA.dist.max = dist.mean * 1000
     )
     sppBiomodData.PA.equal
     
@@ -261,16 +261,14 @@ foreach(especie = especies [1],
       resp.name = diretorio,
       PA.nb.rep = n.conj.pa2,
       PA.nb.absences = 1000,
-      PA.strategy = "disk",
-      PA.dist.min = dist.min * 1000,
-      PA.dist.max = dist.mean * 1000
+      PA.strategy = "sre"
+      # PA.dist.min = dist.min * 1000,
+      # PA.dist.max = dist.mean * 1000
     )
     sppBiomodData.PA.10000
 
     myBiomodOption <-
-      BIOMOD_ModelingOptions(MAXENT.Phillips = list(path_to_maxent.jar = paste0(
-        system.file(package = "dismo"), "/java/maxent.jar"
-      )))
+      BIOMOD_ModelingOptions(MAXENT.Phillips = list(path_to_maxent.jar =c("C:/Users/joaoo/Documents/Modelos_testes/Erro/maxent.jar")))
 
     
     #---------------#
@@ -299,7 +297,7 @@ foreach(especie = especies [1],
 
     sppModelOut.PA.10000 <- BIOMOD_Modeling(
       sppBiomodData.PA.10000,
-      models = c("GLM", "GAM", "ANN", "SRE", "FDA", "MARS", "MAXENT.Phillips"),
+      models = c("MAXENT.Phillips","GLM", "GAM", "ANN", "SRE", "FDA", "MARS"),
       models.options = myBiomodOption,
       NbRunEval = n.runs,
       #número de repetições para cada algoritmo
@@ -358,7 +356,7 @@ foreach(especie = especies [1],
     for (i in 1:n.algo1) {
       m1 <-
         sppModelEval.PA.equal[paste(eval.methods1[1]), "Testing.data", paste(sdm.models1[i]), ,]
-      means.i1 = c(means.i1, m1)
+      means.i1 = c(means.i1, m1) 
     }
     
     summary.eval.equal <-
@@ -394,23 +392,25 @@ foreach(especie = especies [1],
     
 
     sdm.models2 <-
-      c("GLM", "GAM", "ANN", "SRE", "MARS", "MAXENT.Phillips", "FDA") #7 models
+      c("MAXENT.Phillips","GLM", "GAM", "ANN", "SRE", "FDA", "MARS") #7 models
     sdm.models2
     eval.methods2 <- c("TSS", "ROC") #2 evaluation methods
     eval.methods2
+    run.eval<-c("RUN1", "RUN2", "RUN3")
 
-    means.i2 <- numeric(0)
-    for (i in 1:n.algo2) {
+        means.i2 <- numeric(0)
+    for (i2 in 1:n.algo2) {
       m2 <-
-        sppModelEval.PA.10000[paste(eval.methods2[1]), "Testing.data", paste(sdm.models2[i]), ,]
+        sppModelEval.PA.10000[paste(eval.methods2[1]), "Testing.data", paste(sdm.models2[i2]), ,]
       means.i2 = c(means.i2, m2)
     }
 
     summary.eval.10000 <-
-      data.frame(rep(sdm.models2, each = n.runs),
-                 rep(1:n.runs, n.algo2),
+      data.frame(rep(sdm.models2, each =  n.runs*n.conj.pa2),
+                 rep(1:n.conj.pa2, each = n.runs),
+                 rep(1:n.runs, n.algo2*n.runs),
                  means.i2)
-    names(summary.eval.10000) <- c("Model", "Run", "TSS")
+    names(summary.eval.10000) <- c("Model", "PA","Run", "TSS")
     summary.eval.10000
     write.table(
       summary.eval.10000,
@@ -477,10 +477,10 @@ foreach(especie = especies [1],
     summary.eval.equal$ID = 1:(n.runs * n.algo1)
     
     sel = summary.eval.equal[summary.eval.equal[, "TSS"] > 0.400,]
-    sel
+    sel <- na.omit(sel)
     
-    projections_1 = (subset(projections_1, sel[, "ID"]))
-    
+    projections.1 = (subset(projections_1, sel[, "ID"]))
+    names(projections.1)
     ### Definir diretório onde está o arquivo proj_Cur2_presente_Occurrence.grd
     projections_2 <-
       stack(
@@ -497,11 +497,12 @@ foreach(especie = especies [1],
 
     summary.eval.10000 = summary.eval.10000[order(summary.eval.10000$Run),]
     summary.eval.10000$ID = 1:(n.runs * n.algo2)
-
+    
     sel2 = summary.eval.10000[summary.eval.10000[, "TSS"] > 0.400,]
-    sel2
-
-    projections_2 = (subset(projections_2, sel2[, "ID"]))
+    sel2 <- na.omit(sel2)
+    
+    projections.2 = (subset(projections_2, sel2[, "ID"]))
+    names(projections.2)
     #-----------------------------------------------#
     # Mean of the models by algorithm (Present) ####
     #---------------------------------------------#
