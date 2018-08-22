@@ -1,3 +1,7 @@
+#!/usr/bin/env Rscript
+
+
+
 #---------------------------------#
 # DEFINING THE WORK DIRECTORY ####
 #-------------------------------#
@@ -48,24 +52,24 @@
 
 
 library(biomod2)
-library(car)
-library(maptools)
-library(colorRamps)
-library(dismo)
-library(doParallel)
-library(dplyr)
-library(maps)
-library(plotKML)
-library(rgdal)
-library(sdm)
-library(sqldf)
-library(testthat)
-library(usdm)
-library(FactoMineR)
 library(foreach)
 library(raster)
-library(sdmvspecies)
-library(filesstrings)
+library(doParallel)
+#library(car)
+#library(maptools)
+#library(colorRamps)
+#library(dismo)
+#library(dplyr)
+#library(maps)
+#library(plotKML)
+#library(rgdal)
+#library(sdm)
+#library(sqldf)
+#library(testthat)
+#library(usdm)
+#library(FactoMineR)
+#library(sdmvspecies)
+#library(filesstrings)
 
 ### Sempre que necessário:
 # Processamento paralelo #
@@ -73,6 +77,7 @@ library(filesstrings)
 detectCores()
 getDoParWorkers()
 cl <- parallel::makeCluster(2, outfile = "./joao.log")
+#cl <- parallel::makeCluster(10, type = "MPI", outfile = "./outputs/joao.log")
 registerDoParallel(cl)
 getDoParWorkers()
 
@@ -124,7 +129,7 @@ rasterOptions(tmpdir = raster_tmp_dir)
 
 bio.crop <-
   list.files(
-    "./Environmental layers/CHELSA/PCA",
+    "./env/PCA_present",
     full.names = TRUE,
     pattern = ".asc"
   )
@@ -144,7 +149,7 @@ res(bio.crop)
 # Importando dados bióticos
 
 #spp<-read.table(file.choose(), header=T, sep=";")
-spp <- read.table("./leandro.csv", header = T, sep = ";")
+spp <- read.table("./outputs/testes.csv", header = T, sep = ";")
 dim(spp)
 head(spp, 10)
 
@@ -176,7 +181,7 @@ env.selected = bio.crop
 # for(especie in especies[1]) {
 foreach(especie = especies[1],
             .packages = c("raster", "biomod2", 'sp', "sdmvspecies", "filesstrings")) %dopar% {
-  
+  ini1 = Sys.time()
     # criando tabela para uma especie
     occs <- spp[spp$sp == especie, c("lon", "lat")]
     
@@ -221,6 +226,7 @@ foreach(especie = especies[1],
     dist.min <-  min(sp::spDists(x = coord1,
                                    longlat = T,
                                    segments = F))
+    dist.min = 5
 
     write.table(
       c(dist.min, dist.mean),
@@ -242,13 +248,14 @@ foreach(especie = especies[1],
       expl.var = env.selected,
       resp.xy = myRespXY,
       resp.name = diretorio,
-      PA.nb.rep = 2,
+      PA.nb.rep = 1,
       #número de datasets de pseudoausências
       PA.nb.absences = PA.number,
       #= número de pseudoausências = número de pontos espacialmente únicos
-      PA.strategy = "sre"
+      PA.strategy = "disk",
       # PA.dist.min = dist.min * 1000,
-      # PA.dist.max = dist.mean * 1000
+      PA.dist.min = dist.min * 1000,
+      PA.dist.max = dist.mean * 1000
     )
     sppBiomodData.PA.equal
     
@@ -268,7 +275,7 @@ foreach(especie = especies[1],
     sppBiomodData.PA.10000
 
     myBiomodOption <-
-      BIOMOD_ModelingOptions(MAXENT.Phillips = list(path_to_maxent.jar =c("C:/Users/joaoo/Documents/Modelos_testes/Erro/maxent.jar")))
+      BIOMOD_ModelingOptions(MAXENT.Phillips = list(path_to_maxent.jar = jar))
 
     
     #---------------#
@@ -313,9 +320,6 @@ foreach(especie = especies[1],
       modeling.id = "spp_presente"
     )
     sppModelOut.PA.10000
-    
-    
-    
     
     
     #---------------------------------#
@@ -473,6 +477,8 @@ foreach(especie = especies[1],
       )
     names(projections_1)
     
+
+    summary.eval.equal = summary.eval.equal[order(summary.eval.equal$PA),]
     summary.eval.equal = summary.eval.equal[order(summary.eval.equal$Run),]
     summary.eval.equal$ID = 1:(n.runs * n.algo1)
     
@@ -495,8 +501,9 @@ foreach(especie = especies[1],
     names(projections_2)
 
 
+    summary.eval.10000 = summary.eval.10000[order(summary.eval.10000$PA),]
     summary.eval.10000 = summary.eval.10000[order(summary.eval.10000$Run),]
-    summary.eval.10000$ID = 1:(n.runs * n.algo2)
+    summary.eval.10000$ID = 1:(n.runs * n.conj.pa2 * n.algo2)
     
     sel2 = summary.eval.10000[summary.eval.10000[, "TSS"] > 0.400,]
     sel2 <- na.omit(sel2)
@@ -545,7 +552,7 @@ try({
     )
 })
 
-try({    
+  try({    
   projections.all2 <- stack(projections_2)
     projections.GLM.all <-
       subset(projections.all2, grep("GLM", names(projections.all2)))
@@ -894,7 +901,7 @@ try({
           ###GCM 1: CCSM4
           
           bio50.85_CC <-
-            list.files("./Environmental layers/CHELSA_Future/CCSM4/PCA_CCSM4",
+            list.files("./env/PCA_future/CCSM4/PCA_CCSM4",
                        pattern = ".asc$",
                        full.names = TRUE)
           
@@ -907,7 +914,7 @@ try({
           ###GCM 2: CMCC_CM
 
           bio50.85_CM <-
-            list.files("./Environmental layers/CHELSA_Future/CMCC/PCA_CMCC",
+            list.files("./env/PCA_future/CMCC/PCA_CMCC",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_CM
@@ -919,7 +926,7 @@ try({
           ###GCM 3: CSIRO_Mk3
 
           bio50.85_CS <-
-            list.files("./Environmental layers/CHELSA_Future/CSIRO/PCA_CSIRO",
+            list.files("./env/PCA_future/CSIRO/PCA_CSIRO",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_CS
@@ -931,7 +938,7 @@ try({
           ###GCM 4: GFDL_CM3
 
           bio50.85_GF <-
-            list.files("./Environmental layers/CHELSA_Future/GFDL/PCA_GFDL",
+            list.files("./env/PCA_future/GFDL/PCA_GFDL",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_GF
@@ -943,7 +950,7 @@ try({
           #GCM 5: HadGEM2
 
           bio50.85_HG <-
-            list.files("./Environmental layers/CHELSA_Future/CCSM4/PCA_CCSM4",
+            list.files("./env/PCA_future/CCSM4/PCA_CCSM4",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_HG
@@ -955,7 +962,7 @@ try({
           ###GCM 6: MIROC5
 
           bio50.85_MC <-
-            list.files("./Environmental layers/CHELSA_Future/MIROC5/PCA_MIROC5",
+            list.files("./env/PCA_future/MIROC5/PCA_MIROC5",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_MC
@@ -967,7 +974,7 @@ try({
           #GCM 7: MIROC-ESM
 
           bio50.85_MR <-
-            list.files("./Environmental layers/CHELSA_Future/MIROC_ESM/PCA_MIROC_ESM",
+            list.files("./env/PCA_future/MIROC_ESM/PCA_MIROC_ESM",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_MR
@@ -1618,6 +1625,12 @@ try({
             full.names = TRUE
           )), (paste0("./outputs/", especie)))
           
+          #--------------------#          
+          # Marcando tempo ####
+          #------------------#    
+          sink("tempo.txt", append = T)
+          print(especie)
+          print(Sys.time() - ini)
+          sink()
+          
         }
-
-Sys.time() - ini
