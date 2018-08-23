@@ -650,7 +650,7 @@ try({
     #------------------------------#
 # try({
     projections.all.mean <-
-      mean(stack(projections_1, projections_2)) / 10# / dim(stack(projections_1, projections_2))[3]
+      mean(stack(projections.1, projections.2)) / 10# / dim(stack(projections_1, projections_2))[3]
     
     writeRaster(
       projections.all.mean,
