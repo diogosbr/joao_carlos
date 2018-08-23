@@ -76,13 +76,13 @@ library(doParallel)
 
 detectCores()
 getDoParWorkers()
-cl <- parallel::makeCluster(2, outfile = "./joao.log")
-#cl <- parallel::makeCluster(10, type = "MPI", outfile = "./outputs/joao.log")
+#cl <- parallel::makeCluster(2, outfile = "./outputs/joao.log")
+cl <- parallel::makeCluster(10, type = "MPI", outfile = "./outputs/joao.log")
 registerDoParallel(cl)
 getDoParWorkers()
 
 # Aumento da alocação de memória
-memory.limit(100000000) # ou algum outro valor de memória (em kB)
+#memory.limit(100000000) # ou algum outro valor de memória (em kB)
 
 
 #Baixar o Maxent (Apenas rode a funcao abaixo se você não tiver baixado o Maxent)
@@ -129,7 +129,7 @@ rasterOptions(tmpdir = raster_tmp_dir)
 
 bio.crop <-
   list.files(
-    "./env/PCA_present",
+    "./outputs/env/PCA_present",
     full.names = TRUE,
     pattern = ".asc"
   )
@@ -167,10 +167,10 @@ if (dir.exists("outputs") == F) {
   dir.create("outputs")
 }
 
-n.runs = 2 #numero de rodadas
+n.runs = 5 #numero de rodadas
 n.algo1 = 3 #numero de algoritmos
 n.algo2 = 7 #numero de algoritmos
-n.conj.pa2 = 2 #conjunto de pseudo-ausencias
+n.conj.pa2 = 5 #conjunto de pseudo-ausencias
 env.selected = bio.crop
 
 #-------------------------#
@@ -179,7 +179,7 @@ env.selected = bio.crop
 
 (ini = Sys.time())
 # for(especie in especies[1]) {
-foreach(especie = especies[1],
+foreach(especie = especies,
             .packages = c("raster", "biomod2", 'sp', "sdmvspecies", "filesstrings")) %dopar% {
   ini1 = Sys.time()
     # criando tabela para uma especie
@@ -268,9 +268,9 @@ foreach(especie = especies[1],
       resp.name = diretorio,
       PA.nb.rep = n.conj.pa2,
       PA.nb.absences = 1000,
-      PA.strategy = "sre"
-      # PA.dist.min = dist.min * 1000,
-      # PA.dist.max = dist.mean * 1000
+      PA.strategy = "disk",
+      PA.dist.min = dist.min * 1000,
+      PA.dist.max = dist.mean * 1000
     )
     sppBiomodData.PA.10000
 
@@ -412,7 +412,7 @@ foreach(especie = especies[1],
     summary.eval.10000 <-
       data.frame(rep(sdm.models2, each =  n.runs*n.conj.pa2),
                  rep(1:n.conj.pa2, each = n.runs),
-                 rep(1:n.runs, n.algo2*n.runs),
+                 rep(1:n.runs, n.algo2),
                  means.i2)
     names(summary.eval.10000) <- c("Model", "PA","Run", "TSS")
     summary.eval.10000
@@ -476,11 +476,12 @@ foreach(especie = especies[1],
         )
       )
     names(projections_1)
+    x1 = length(names(projections_1))
     
+    summary.eval.equal = na.omit(summary.eval.equal)
 
-    summary.eval.equal = summary.eval.equal[order(summary.eval.equal$PA),]
     summary.eval.equal = summary.eval.equal[order(summary.eval.equal$Run),]
-    summary.eval.equal$ID = 1:(n.runs * n.algo1)
+    summary.eval.equal$ID = 1:x1
     
     sel = summary.eval.equal[summary.eval.equal[, "TSS"] > 0.400,]
     sel <- na.omit(sel)
@@ -499,11 +500,12 @@ foreach(especie = especies[1],
         )
       )
     names(projections_2)
-
-
+    x2 = length(names(projections_2))
+    summary.eval.10000
     summary.eval.10000 = summary.eval.10000[order(summary.eval.10000$PA),]
     summary.eval.10000 = summary.eval.10000[order(summary.eval.10000$Run),]
-    summary.eval.10000$ID = 1:(n.runs * n.conj.pa2 * n.algo2)
+    summary.eval.10000$ID = 1:x2
+      #(n.runs * n.conj.pa2 * n.algo2)
     
     sel2 = summary.eval.10000[summary.eval.10000[, "TSS"] > 0.400,]
     sel2 <- na.omit(sel2)
@@ -901,7 +903,7 @@ try({
           ###GCM 1: CCSM4
           
           bio50.85_CC <-
-            list.files("./env/PCA_future/CCSM4/PCA_CCSM4",
+            list.files("./output/env/PCA_future/CCSM4",
                        pattern = ".asc$",
                        full.names = TRUE)
           
@@ -914,7 +916,7 @@ try({
           ###GCM 2: CMCC_CM
 
           bio50.85_CM <-
-            list.files("./env/PCA_future/CMCC/PCA_CMCC",
+            list.files("./output/env/PCA_future/CMCC",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_CM
@@ -926,7 +928,7 @@ try({
           ###GCM 3: CSIRO_Mk3
 
           bio50.85_CS <-
-            list.files("./env/PCA_future/CSIRO/PCA_CSIRO",
+            list.files("./output/env/PCA_future/CSIRO",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_CS
@@ -938,7 +940,7 @@ try({
           ###GCM 4: GFDL_CM3
 
           bio50.85_GF <-
-            list.files("./env/PCA_future/GFDL/PCA_GFDL",
+            list.files("./output/env/PCA_future/GFDL",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_GF
@@ -950,7 +952,7 @@ try({
           #GCM 5: HadGEM2
 
           bio50.85_HG <-
-            list.files("./env/PCA_future/CCSM4/PCA_CCSM4",
+            list.files("./output/env/PCA_future/CCSM4",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_HG
@@ -962,7 +964,7 @@ try({
           ###GCM 6: MIROC5
 
           bio50.85_MC <-
-            list.files("./env/PCA_future/MIROC5/PCA_MIROC5",
+            list.files("./output/env/PCA_future/MIROC5",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_MC
@@ -974,7 +976,7 @@ try({
           #GCM 7: MIROC-ESM
 
           bio50.85_MR <-
-            list.files("./env/PCA_future/MIROC_ESM/PCA_MIROC_ESM",
+            list.files("./output/env/PCA_future/MIROC_ESM",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_MR
@@ -1201,7 +1203,7 @@ try({
               )
             )
           projections.2050.rcp85_2_CS <-
-            subset(projections.2050.rcp85_1_CS, c(names(projections_2)))
+            subset(projections.2050.rcp85_2_CS, c(names(projections_2)))
           names(projections.2050.rcp85_2_CS)
           
 
@@ -1620,7 +1622,7 @@ try({
             full.names = TRUE
           )
           
-          file.move((list.files(
+          filesstrings::file.move((list.files(
             "./outputs/",paste0(especie, "_"),
             full.names = TRUE
           )), (paste0("./outputs/", especie)))
@@ -1633,4 +1635,6 @@ try({
           print(Sys.time() - ini)
           sink()
           
-        }
+            }
+
+Sys.time() - ini
