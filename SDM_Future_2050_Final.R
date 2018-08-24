@@ -402,7 +402,7 @@ foreach(especie = especies,
     eval.methods2
     run.eval<-c("RUN1", "RUN2", "RUN3")
 
-        means.i2 <- numeric(0)
+    means.i2 <- numeric(0)
     for (i2 in 1:n.algo2) {
       m2 <-
         sppModelEval.PA.10000[paste(eval.methods2[1]), "Testing.data", paste(sdm.models2[i2]), ,]
@@ -903,7 +903,7 @@ try({
           ###GCM 1: CCSM4
           
           bio50.85_CC <-
-            list.files("./output/env/PCA_future/CCSM4",
+            list.files("./outputs/env/PCA_future/CCSM4",
                        pattern = ".asc$",
                        full.names = TRUE)
           
@@ -916,7 +916,7 @@ try({
           ###GCM 2: CMCC_CM
 
           bio50.85_CM <-
-            list.files("./output/env/PCA_future/CMCC",
+            list.files("./outputs/env/PCA_future/CMCC",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_CM
@@ -928,7 +928,7 @@ try({
           ###GCM 3: CSIRO_Mk3
 
           bio50.85_CS <-
-            list.files("./output/env/PCA_future/CSIRO",
+            list.files("./outputs/env/PCA_future/CSIRO",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_CS
@@ -940,7 +940,7 @@ try({
           ###GCM 4: GFDL_CM3
 
           bio50.85_GF <-
-            list.files("./output/env/PCA_future/GFDL",
+            list.files("./outputs/env/PCA_future/GFDL",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_GF
@@ -952,7 +952,7 @@ try({
           #GCM 5: HadGEM2
 
           bio50.85_HG <-
-            list.files("./output/env/PCA_future/CCSM4",
+            list.files("./outputs/env/PCA_future/CCSM4",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_HG
@@ -964,7 +964,7 @@ try({
           ###GCM 6: MIROC5
 
           bio50.85_MC <-
-            list.files("./output/env/PCA_future/MIROC5",
+            list.files("./outputs/env/PCA_future/MIROC5",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_MC
@@ -976,7 +976,7 @@ try({
           #GCM 7: MIROC-ESM
 
           bio50.85_MR <-
-            list.files("./output/env/PCA_future/MIROC_ESM",
+            list.files("./outputs/env/PCA_future/MIROC_ESM",
                        pattern = ".asc$",
                        full.names = TRUE)
           bio50.85_MR
