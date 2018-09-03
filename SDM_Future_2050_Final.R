@@ -1150,8 +1150,7 @@ try({
           projections.2050.rcp85_2_CC <-
              subset(projections.2050.rcp85_2_CC, c(names(projections_2)))
           names(projections.2050.rcp85_2_CC)
-          projections.2050.rcp85_CC<-c(projections.2050.rcp85_1_CC,projections.2050.rcp85_2_CC)
-          
+
           projections.2050.rcp85_1_CM <-
             stack(
               paste0(
