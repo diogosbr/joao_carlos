@@ -130,7 +130,7 @@ rasterOptions(tmpdir = raster_tmp_dir)
 bio.crop <-
   list.files("./env/PCA_present",
              full.names = TRUE,
-             pattern = ".asc")
+             pattern = ".tif")
 #bio.crop <- list.files("./Environmental layers/CHELSA", full.names=TRUE, pattern=".grd")
 bio.crop
 bio.crop <- stack(bio.crop)
