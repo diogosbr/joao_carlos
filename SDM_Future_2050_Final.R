@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript
+﻿#!/usr/bin/env Rscript
 
 
 
@@ -359,90 +359,117 @@ foreach(
   
   
   means.i1 <- numeric(0)
-  for (i in 1:n.algo1) {
-    m1 <-
-      sppModelEval.PA.equal[paste(eval.methods1[1]), "Testing.data", paste(sdm.models1[i]), , ]
-    means.i1 = c(means.i1, m1)
-  }
-  
-  summary.eval.equal <-
-    data.frame(rep(sdm.models1, each = n.runs),
-               rep(1:n.runs, n.algo1),
-               means.i1)
-  names(summary.eval.equal) <- c("Model", "Run", "TSS")
-  summary.eval.equal
-  
-  write.table(
-    summary.eval.equal,
-    paste0("./outputs/", especie, "_", "Models1_Evaluation_Mean.csv")
-  )
-  
-  sd.i1 <- numeric(0)
-  sd.j1 <- numeric(2)
-  for (i in 1:n.algo1) {
-    for (j in 1:2) {
-      sd.j1[j] <-
-        sd(sppModelEval.PA.equal[paste(eval.methods1[j]), "Testing.data", paste(sdm.models1[i]), , ])
-    }
-    sd.i1 <- c(sd.i1, sd.j1)
-  }
-  
-  summary.eval.equal.sd <-
-    data.frame(rep(sdm.models1, each = 2), rep(eval.methods1, n.algo1), sd.i1)
-  names(summary.eval.equal.sd) <- c("Model", "Method", "SD")
-  summary.eval.equal.sd
-  write.table(
-    summary.eval.equal.sd,
-    paste0("./outputs/", especie, "_", "Models1_Evaluation_SD.csv")
-  )
-  
-  
-  sdm.models2 <-
-    c("MAXENT.Phillips", "GLM", "GAM", "ANN", "FDA", "MARS") #7 models
-  sdm.models2
-  eval.methods2 <- c("TSS", "ROC") #2 evaluation methods
-  eval.methods2
-  
-  
-  means.i2 <- numeric(0)
-  for (i2 in 1:n.algo2) {
-    m2 <-
-      sppModelEval.PA.10000[paste(eval.methods2[1]), "Testing.data", paste(sdm.models2[i2]), , ]
-    means.i2 = c(means.i2, m2)
-  }
-  
-  summary.eval.10000 <-
-    data.frame(
-      rep(sdm.models2, each =  n.runs * n.conj.pa2),
-      rep(1:n.conj.pa2, each = n.runs),
-      rep(1:n.runs, n.algo2),
-      means.i2
-    )
-  names(summary.eval.10000) <- c("Model", "PA", "Run", "TSS")
-  summary.eval.10000
-  write.table(
-    summary.eval.10000,
-    paste0("./outputs/", especie, "_", "Models2_Evaluation_Mean.csv")
-  )
-  
-  sd.i2 <- numeric(0)
-  sd.j2 <- numeric(2)
-  for (i in 1:n.algo2) {
-    for (j in 1:2) {
-      sd.j2[j] <-
-        sd(sppModelEval.PA.10000[paste(eval.methods2[j]), "Testing.data", paste(sdm.models2[i]), , ])
-    }
-    sd.i2 <- c(sd.i2, sd.j2)
-  }
-  
-  summary.eval.10000.sd <-
-    data.frame(rep(sdm.models2, each = 2), rep(eval.methods2, n.algo2), sd.i2)
-  names(summary.eval.10000.sd) <- c("Model", "Method", "SD")
-  summary.eval.10000.sd
-  write.table(
-    summary.eval.10000.sd,
-    paste0("./outputs/", especie, "_", "Models2_Evaluation_SD.csv")
-  )
+          for (i in 1:n.algo1) {
+            m1 <-
+              sppModelEval.PA.equal[paste(eval.methods1[1]), "Testing.data", paste(sdm.models1[i]), ,]
+            means.i1 = c(means.i1, m1) 
+          }
+          
+          summary.eval.equal <-
+            data.frame(rep(sdm.models1, each =  n.runs*n.conj.pa2),
+                       rep(1:n.conj.pa2, each = n.runs),
+                       rep(1:n.runs, n.algo1),
+                       means.i1)
+          names(summary.eval.equal) <- c("Model", "PA","Run", "TSS")
+          summary.eval.equal
+          write.table(
+            summary.eval.equal,
+            paste0("./outputs/", especie, "_", "Models1_Evaluation.csv")
+          )
+          
+          means.i1.1 <- numeric(0)
+          means.j1.1 <- numeric(2)
+          for (i in 1:n.algo1){
+            for (j in 1:2){
+              means.j1.1[j] <- mean(sppModelEval.PA.equal[paste(eval.methods1[j]),"Testing.data",paste(sdm.models1[i]),,])
+            }
+            means.i1.1 <- c(means.i1.1, means.j1.1)
+          }
+          
+          summary.eval.equal.mean <- data.frame(rep(sdm.models1,each=j), rep(eval.methods1,i), means.i1.1)
+          names(summary.eval.equal.mean) <- c("Model", "Method", "Mean")
+          summary.eval.equal.mean
+          write.table(summary.eval.equal.mean,"Models1_Evaluation_Mean.csv")
+          
+          sd.i1 <- numeric(0)
+          sd.j1 <- numeric(2)
+          for (i in 1:n.algo1) {
+            for (j in 1:2) {
+              sd.j1[j] <-
+                sd(sppModelEval.PA.equal[paste(eval.methods1[j]), "Testing.data", paste(sdm.models1[i]), ,])
+            }
+            sd.i1 <- c(sd.i1, sd.j1)
+          }
+          
+          summary.eval.equal.sd <-
+            data.frame(rep(sdm.models1, each = 2), rep(eval.methods1, n.algo1), sd.i1)
+          names(summary.eval.equal.sd) <- c("Model", "Method", "SD")
+          summary.eval.equal.sd
+          write.table(
+            summary.eval.equal.sd,
+            paste0("./outputs/", especie, "_", "Models1_Evaluation_SD.csv")
+          )
+          
+          
+          sdm.models2 <-
+            c("MAXENT.Phillips", "GLM", "GAM", "ANN", "FDA", "MARS") #7 models
+          sdm.models2
+          eval.methods2 <- c("TSS", "ROC") #2 evaluation methods
+          eval.methods2
+          
+          
+          means.i2 <- numeric(0)
+          for (i2 in 1:n.algo2) {
+            m2 <-
+              sppModelEval.PA.10000[paste(eval.methods2[1]), "Testing.data", paste(sdm.models2[i2]), ,]
+            means.i2 = c(means.i2, m2)
+          }
+          
+          summary.eval.10000 <-
+            data.frame(rep(sdm.models2, each =  n.runs*n.conj.pa2),
+                       rep(1:n.conj.pa2, each = n.runs),
+                       rep(1:n.runs, n.algo2),
+                       means.i2)
+          names(summary.eval.10000) <- c("Model", "PA","Run", "TSS")
+          summary.eval.10000
+          write.table(
+            summary.eval.10000,
+            paste0("./outputs/", especie, "_", "Models2_Evaluation.csv")
+          )
+          
+          means.i2.2 <- numeric(0)
+          means.j2.2 <- numeric(2)
+          for (i in 1:n.algo2){
+            for (j in 1:2){
+              means.j2.2[j] <- mean(sppModelEval.PA.10000[paste(eval.methods2[j]),"Testing.data",paste(sdm.models2[i]),,], na.rm = T)
+            }
+            means.i2.2 <- c(means.i2.2, means.j2.2)
+          }
+          
+          summary.eval.10000.mean <- data.frame(rep(sdm.models2,each=j), rep(eval.methods2,i), means.i2.2)
+          names(summary.eval.10000.mean) <- c("Model", "Method", "Mean")
+          summary.eval.10000.mean
+          write.table(summary.eval.10000.mean,"Models2_Evaluation_Mean.csv")
+          
+          
+          sd.i2 <- numeric(0)
+          sd.j2 <- numeric(2)
+          for (i in 1:n.algo2) {
+            for (j in 1:2) {
+              sd.j2[j] <-
+                sd(sppModelEval.PA.10000[paste(eval.methods2[j]), "Testing.data", paste(sdm.models2[i]), ,])
+            }
+            sd.i2 <- c(sd.i2, sd.j2)
+          }
+          
+          summary.eval.10000.sd <-
+            data.frame(rep(sdm.models2, each = 2), rep(eval.methods2, n.algo2), sd.i2)
+          names(summary.eval.10000.sd) <- c("Model", "Method", "SD")
+          summary.eval.10000.sd
+          write.table(
+            summary.eval.10000.sd,
+            paste0("./outputs/", especie, "_", "Models2_Evaluation_SD.csv")
+          )
   
   
   #-----------------------------#
@@ -672,121 +699,125 @@ foreach(
   # Scores ROC Threshold ####
   #------------------------#
   
-  (scores_equal <- get_evaluations(sppModelOut.PA.equal))
-  scores_ROC_equal <-
-    as.numeric(scores_equal["ROC", "Cutoff", , ,])
-  write.table(scores_ROC_equal,
-              paste0("./outputs/", especie, "_", "scores_equal_.csv"))
-  
-  ##Scores GBM
-  scores_ROC_GBM <-
-    as.numeric(scores_equal["ROC", "Cutoff", "GBM", ,])
-  scores_ROC_GBM <- na.exclude(scores_ROC_GBM)
-  th_GBM <- mean(scores_ROC_GBM) / 10
-  th_GBM
-  write.table(th_GBM,
-              paste0("./outputs/", especie, "_", "scores_ROC_GBM_.csv"))
-  
-  ##Scores CTA
-  scores_ROC_CTA <-
-    as.numeric(scores_equal["ROC", "Cutoff", "CTA", ,])
-  scores_ROC_CTA <- na.exclude(scores_ROC_CTA)
-  th_CTA <- mean(scores_ROC_CTA) / 10
-  th_CTA
-  write.table(th_CTA,
-              paste0("./outputs/", especie, "_", "scores_ROC_CTA_.csv"))
-  
-  ##Scores RF
-  scores_ROC_RF <-
-    as.numeric(scores_equal["ROC", "Cutoff", "RF", ,])
-  scores_ROC_RF <- na.exclude(scores_ROC_RF)
-  th_RF <- mean(scores_ROC_RF) / 10
-  th_RF
-  write.table(th_RF,
-              paste0("./outputs/", especie, "_", "scores_ROC_RF_.csv"))
-  
-  ## Evaluation Scores of the  Projections with PA.10000
-  (scores_10000 <- get_evaluations(sppModelOut.PA.10000))
-  scores_ROC_10000 <-
-    as.numeric(scores_10000["ROC", "Cutoff", , ,])
-  write.table(scores_ROC_10000,
-              paste0("./outputs/", especie, "_", "scores_10000_.csv"))
-  ##Scores GLM
-  scores_ROC_GLM <-
-    as.numeric(scores_10000["ROC", "Cutoff", "GLM", ,])
-  scores_ROC_GLM <- na.exclude(scores_ROC_GLM)
-  th_GLM <- mean(scores_ROC_GLM) / 10
-  th_GLM
-  write.table(th_GLM,
-              paste0("./outputs/", especie, "_", "scores_ROC_GLM_.csv"))
-  
-  ##Scores GAM
-  scores_ROC_GAM <-
-    as.numeric(scores_10000["ROC", "Cutoff", "GAM", ,])
-  scores_ROC_GAM <- na.exclude(scores_ROC_GAM)
-  th_GAM <- mean(scores_ROC_GAM) / 10
-  th_GAM
-  write.table(th_GAM,
-              paste0("./outputs/", especie, "_", "scores_ROC_GAM_.csv"))
-  
-  ##Scores ANN
-  scores_ROC_ANN <-
-    as.numeric(scores_10000["ROC", "Cutoff", "ANN", ,])
-  scores_ROC_ANN <- na.exclude(scores_ROC_ANN)
-  th_ANN <- mean(scores_ROC_ANN) / 10
-  th_ANN
-  write.table(th_ANN,
-              paste0("./outputs/", especie, "_", "scores_ROC_ANN_.csv"))
-  
-  # ##Scores SRE
-  # scores_ROC_SRE <-
-  #   as.numeric(scores_10000["ROC", "Cutoff", "SRE", , ])
-  # scores_ROC_SRE <- na.exclude(scores_ROC_SRE)
-  # th_SRE <- mean(scores_ROC_SRE) / 10
-  # th_SRE
-  # write.table(th_SRE, paste0("./outputs/",especie, "_", "scores_ROC_SRE_.csv"))
-  
-  ##Scores FDA
-  scores_ROC_FDA <-
-    as.numeric(scores_10000["ROC", "Cutoff", "FDA", ,])
-  scores_ROC_FDA <- na.exclude(scores_ROC_FDA)
-  th_FDA <- mean(scores_ROC_FDA) / 10
-  th_FDA
-  write.table(th_FDA,
-              paste0("./outputs/", especie, "_", "scores_ROC_FDA_.csv"))
-  
-  ##Scores MARS
-  scores_ROC_MARS <-
-    as.numeric(scores_10000["ROC", "Cutoff", "MARS", ,])
-  scores_ROC_MARS <- na.exclude(scores_ROC_MARS)
-  th_MARS <- mean(scores_ROC_MARS) / 10
-  th_MARS
-  write.table(th_MARS,
-              paste0("./outputs/", especie, "_", "scores_ROC_MARS_.csv"))
-  
-  ##Scores MAXENT.Phillips
-  scores_ROC_MAXENT.Phillips <-
-    as.numeric(scores_10000["ROC", "Cutoff", "MAXENT.Phillips", ,])
-  scores_ROC_MAXENT.Phillips <-
-    na.exclude(scores_ROC_MAXENT.Phillips)
-  th_MAXENT.Phillips <-
-    mean(scores_ROC_MAXENT.Phillips) / 10
-  th_MAXENT.Phillips
-  write.table(
-    th_MAXENT.Phillips,
-    paste0(
-      "./outputs/",
-      especie,
-      "_",
-      "scores_ROC_MAXENT.Phillips_.csv"
-    )
-  )
-  
-  #Scores mean
-  th_mean <- mean(c(scores_ROC_10000, scores_ROC_equal), na.rm = T) /
-    10
-  write.table(th_mean,
-              paste0("./outputs/", especie, "_", "scores_ROC_mean.csv"))
+      (scores_equal <- get_evaluations(sppModelOut.PA.equal))
+          scores_ROC_equal <-
+            as.numeric(scores_equal["ROC", "Cutoff", , , ])
+          scores_ROC_equal[scores_ROC_equal=='-Inf']<-NA
+          write.table(scores_ROC_equal, paste0("./outputs/",especie, "_", "scores_equal_.csv"))
+          
+          try({ 
+            ##Scores GBM
+            scores_ROC_GBM <-
+              as.numeric(scores_equal["ROC", "Cutoff", "GBM", , ])
+            scores_ROC_GBM[scores_ROC_GBM=="-Inf"]<-NA
+            scores_ROC_GBM
+            scores_ROC_GBM <- as.numeric(na.exclude(scores_ROC_GBM))
+            th_GBM <- mean(scores_ROC_GBM) / 10
+            th_GBM
+            write.table(th_GBM, paste0("./outputs/",especie, "_", "scores_ROC_GBM_.csv"))
+          })
+          try({ 
+            ##Scores CTA
+            scores_ROC_CTA <-
+              as.numeric(scores_equal["ROC", "Cutoff", "CTA", , ])
+            scores_ROC_CTA[scores_ROC_CTA=="-Inf"]<-NA
+            scores_ROC_CTA <- na.exclude(scores_ROC_CTA)
+            th_CTA <- mean(scores_ROC_CTA) / 10
+            th_CTA
+            write.table(th_CTA, paste0("./outputs/",especie, "_", "scores_ROC_CTA_.csv"))
+          })
+          try({ 
+            ##Scores RF
+            scores_ROC_RF <-
+              as.numeric(scores_equal["ROC", "Cutoff", "RF", , ])
+            scores_ROC_RF <- na.exclude(scores_ROC_RF)
+            scores_ROC_RF[scores_ROC_RF=="-Inf"]<-NA
+            th_RF <- mean(scores_ROC_RF) / 10
+            th_RF
+            write.table(th_RF, paste0("./outputs/",especie, "_", "scores_ROC_RF_.csv"))
+          })
+          
+          ## Evaluation Scores of the  Projections with PA.10000
+          (scores_10000 <- get_evaluations(sppModelOut.PA.10000))
+          scores_ROC_10000 <-
+            as.numeric(scores_10000["ROC", "Cutoff", , , ])
+          scores_ROC_10000[scores_ROC_10000=='-Inf']<-NA
+          write.table(scores_ROC_10000, paste0("./outputs/",especie, "_", "scores_10000_.csv"))
+
+          
+          try({ 
+            ##Scores GLM
+            scores_ROC_GLM <-
+              as.numeric(scores_10000["ROC", "Cutoff", "GLM", , ])
+            scores_ROC_GLM[scores_ROC_GLM=="-Inf"]<-NA
+            scores_ROC_GLM <- na.exclude(scores_ROC_GLM)
+            th_GLM <- mean(scores_ROC_GLM) / 10
+            th_GLM
+            write.table(th_GLM, paste0("./outputs/",especie, "_", "scores_ROC_GLM_.csv"))
+          })
+          try({ 
+            ##Scores GAM
+            scores_ROC_GAM <-
+              as.numeric(scores_10000["ROC", "Cutoff", "GAM", , ])
+            scores_ROC_GAM[scores_ROC_GAM=="-Inf"]<-NA
+            scores_ROC_GAM <- na.exclude(scores_ROC_GAM)
+            th_GAM <- mean(scores_ROC_GAM) / 10
+            th_GAM
+            write.table(th_GAM, paste0("./outputs/",especie, "_", "scores_ROC_GAM_.csv"))
+          })
+          try({ 
+            ##Scores ANN
+            scores_ROC_ANN <-
+              as.numeric(scores_10000["ROC", "Cutoff", "ANN", , ])
+            scores_ROC_ANN[scores_ROC_ANN=="-Inf"]<-NA
+            scores_ROC_ANN <- na.exclude(scores_ROC_ANN)
+            th_ANN <- mean(scores_ROC_ANN) / 10
+            th_ANN
+            write.table(th_ANN, paste0("./outputs/",especie, "_", "scores_ROC_ANN_.csv"))
+          })
+          # ##Scores SRE
+          # scores_ROC_SRE <-
+          #   as.numeric(scores_10000["ROC", "Cutoff", "SRE", , ])
+          # scores_ROC_SRE[scores_ROC_SRE=="-Inf"]<-NA
+          # scores_ROC_SRE <- na.exclude(scores_ROC_SRE)
+          # th_SRE <- mean(scores_ROC_SRE) / 10
+          # th_SRE
+          # write.table(th_SRE, paste0("./outputs/",especie, "_", "scores_ROC_SRE_.csv"))
+          try({ 
+            ##Scores FDA
+            scores_ROC_FDA <-
+              as.numeric(scores_10000["ROC", "Cutoff", "FDA", , ])
+            scores_ROC_FDA[scores_ROC_FDA=="-Inf"]<-NA
+            scores_ROC_FDA <- na.exclude(scores_ROC_FDA)
+            th_FDA <- mean(scores_ROC_FDA) / 10
+            th_FDA
+            write.table(th_FDA, paste0("./outputs/",especie, "_", "scores_ROC_FDA_.csv"))
+          })
+          try({ 
+            ##Scores MARS
+            scores_ROC_MARS <-
+              as.numeric(scores_10000["ROC", "Cutoff", "MARS", , ])
+            scores_ROC_MARS[scores_ROC_MARS=="-Inf"]<-NA
+            scores_ROC_MARS <- na.exclude(scores_ROC_MARS)
+            th_MARS <- mean(scores_ROC_MARS) / 10
+            th_MARS
+            write.table(th_MARS, paste0("./outputs/",especie, "_", "scores_ROC_MARS_.csv"))
+          })
+          try({ 
+            ##Scores MAXENT.Phillips
+            scores_ROC_MAXENT.Phillips <-
+              as.numeric(scores_10000["ROC", "Cutoff", "MAXENT.Phillips", , ])
+            scores_ROC_MAXENT.Phillips[scores_ROC_MAXENT.Phillips=="-Inf"]<-NA
+            scores_ROC_MAXENT.Phillips <-
+              na.exclude(scores_ROC_MAXENT.Phillips)
+            th_MAXENT.Phillips <-
+              mean(scores_ROC_MAXENT.Phillips) / 10
+            th_MAXENT.Phillips
+            write.table(th_MAXENT.Phillips, paste0("./outputs/",especie, "_", "scores_ROC_MAXENT.Phillips_.csv"))
+          })
+          #Scores mean
+          (th_mean<-mean(c(scores_ROC_10000,scores_ROC_equal), na.rm=T)/10)
+          write.table(th_mean, paste0("./outputs/",especie, "_", "scores_ROC_mean.csv"))
   #-------------------------------------------------------#
   # Binary models by each algorithm (Current Climate) ####
   #-----------------------------------------------------#
