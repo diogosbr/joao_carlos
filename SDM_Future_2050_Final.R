@@ -55,6 +55,7 @@ library(biomod2)
 library(foreach)
 library(raster)
 library(doParallel)
+library(sdmvspecies)
 #library(car)
 #library(maptools)
 #library(colorRamps)
@@ -68,7 +69,6 @@ library(doParallel)
 #library(testthat)
 #library(usdm)
 #library(FactoMineR)
-#library(sdmvspecies)
 #library(filesstrings)
 
 ### Sempre que necessário:
@@ -131,11 +131,12 @@ bio.crop <-
   list.files(
     "./env/PCA_present",
     full.names = TRUE,
-    pattern = ".asc"
+    pattern = ".tif$"
   )
 #bio.crop <- list.files("./Environmental layers/CHELSA", full.names=TRUE, pattern=".grd")
 bio.crop
 bio.crop <- stack(bio.crop)
+bio.crop<-rescale(bio.crop)
 bio.crop
 names(bio.crop)
 res(bio.crop)
@@ -190,12 +191,18 @@ foreach(especie = especies,
     
     # Selecionado pontos espacialmente únicos #
     mask <- env.selected[[1]]
-    cell <-
-      cellFromXY(mask, occs[, 1:2]) # get the cell number for each point
-    dup <- duplicated(cbind(occs[, 1:2], cell))
-    occs <-
-      occs[!dup, ]# select the records that are not duplicated
-    dim(occs)
+{(cell <-
+      cellFromXY(mask, occs[, 1:2])) # get the cell number for each point
+    (x<-(cbind(occs[, 1:2], cell)))
+    #dup <- duplicated(cbind(occs[, 1:2], cell))
+    (dup2 <- duplicated(cbind(cell)))
+    xv<-data.frame(x,dup2)
+    xv[xv=="TRUE"]<-NA
+    (xv<-na.omit(xv))
+    xv<-xv[,1:2]
+    occs =xv # select the records that are not duplicated
+    }
+
     
     #-----------------------------------------------#
     # GENERATING OTHER REQUIRED OBJECTS FOR SDM ####
@@ -364,16 +371,31 @@ foreach(especie = especies,
     }
     
     summary.eval.equal <-
-      data.frame(rep(sdm.models1, each = n.runs),
+      data.frame(rep(sdm.models1, each =  n.runs*n.conj.pa2),
+                 rep(1:n.conj.pa2, each = n.runs),
                  rep(1:n.runs, n.algo1),
                  means.i1)
-    names(summary.eval.equal) <- c("Model", "Run", "TSS")
+    names(summary.eval.equal) <- c("Model", "PA","Run", "TSS")
     summary.eval.equal
-    
     write.table(
       summary.eval.equal,
-      paste0("./outputs/", especie, "_", "Models1_Evaluation_Mean.csv")
+      paste0("./outputs/", especie, "_", "Models1_Evaluation.csv")
     )
+    
+    means.i1.1 <- numeric(0)
+    means.j1.1 <- numeric(2)
+    for (i in 1:n.algo1){
+      for (j in 1:2){
+        means.j1.1[j] <- mean(sppModelEval.PA.equal[paste(eval.methods1[j]),"Testing.data",paste(sdm.models1[i]),,])
+      }
+      means.i1.1 <- c(means.i1.1, means.j1.1)
+    }
+    
+    summary.eval.equal.mean <- data.frame(rep(sdm.models1,each=j), rep(eval.methods1,i), means.i1.1)
+    names(summary.eval.equal.mean) <- c("Model", "Method", "Mean")
+    summary.eval.equal.mean
+    write.table(summary.eval.equal.mean,
+                paste0("./outputs/", especie, "_", "Models1_Evaluation_Mean.csv"))
     
     sd.i1 <- numeric(0)
     sd.j1 <- numeric(2)
@@ -418,8 +440,24 @@ foreach(especie = especies,
     summary.eval.10000
     write.table(
       summary.eval.10000,
-      paste0("./outputs/", especie, "_", "Models2_Evaluation_Mean.csv")
+      paste0("./outputs/", especie, "_", "Models2_Evaluation.csv")
     )
+    
+    means.i2.2 <- numeric(0)
+    means.j2.2 <- numeric(2)
+    for (i in 1:n.algo2){
+      for (j in 1:2){
+        means.j2.2[j] <- mean(sppModelEval.PA.10000[paste(eval.methods2[j]),"Testing.data",paste(sdm.models2[i]),,], na.rm = T)
+      }
+      means.i2.2 <- c(means.i2.2, means.j2.2)
+    }
+    
+    summary.eval.10000.mean <- data.frame(rep(sdm.models2,each=j), rep(eval.methods2,i), means.i2.2)
+    names(summary.eval.10000.mean) <- c("Model", "Method", "Mean")
+    summary.eval.10000.mean
+    write.table(summary.eval.10000.mean,
+                paste0("./outputs/", especie, "_", "Models2_Evaluation_Mean.csv"))
+    
     
     sd.i2 <- numeric(0)
     sd.j2 <- numeric(2)
@@ -488,6 +526,7 @@ foreach(especie = especies,
     
     projections.1 = (subset(projections_1, sel[, "ID"]))
     names(projections.1)
+    proj.select1 <- names(projections.1)
     ### Definir diretório onde está o arquivo proj_Cur2_presente_Occurrence.grd
     projections_2 <-
       stack(
@@ -511,6 +550,7 @@ foreach(especie = especies,
     
     projections.2 = (subset(projections_2, sel2[, "ID"]))
     names(projections.2)
+    proj.select2 <- names(projections.2)
     #-----------------------------------------------#
     # Mean of the models by algorithm (Present) ####
     #---------------------------------------------#
@@ -658,12 +698,9 @@ foreach(especie = especies,
       overwrite = TRUE
     )
 # })
-    # gc()
-     
-# }
-# 
-# Sys.time() - ini
 
+    
+    
 #--------------------------#
 # Scores ROC Threshold ####
 #------------------------#
@@ -671,97 +708,121 @@ foreach(especie = especies,
     (scores_equal <- get_evaluations(sppModelOut.PA.equal))
     scores_ROC_equal <-
       as.numeric(scores_equal["ROC", "Cutoff", , , ])
+    scores_ROC_equal[scores_ROC_equal=='-Inf']<-NA
     write.table(scores_ROC_equal, paste0("./outputs/",especie, "_", "scores_equal_.csv"))
     
-    ##Scores GBM
-    scores_ROC_GBM <-
-      as.numeric(scores_equal["ROC", "Cutoff", "GBM", , ])
-    scores_ROC_GBM <- na.exclude(scores_ROC_GBM)
-    th_GBM <- mean(scores_ROC_GBM) / 10
-    th_GBM
-    write.table(th_GBM, paste0("./outputs/",especie, "_", "scores_ROC_GBM_.csv"))
-    
-    ##Scores CTA
-    scores_ROC_CTA <-
-      as.numeric(scores_equal["ROC", "Cutoff", "CTA", , ])
-    scores_ROC_CTA <- na.exclude(scores_ROC_CTA)
-    th_CTA <- mean(scores_ROC_CTA) / 10
-    th_CTA
-    write.table(th_CTA, paste0("./outputs/",especie, "_", "scores_ROC_CTA_.csv"))
-    
-    ##Scores RF
-    scores_ROC_RF <-
-      as.numeric(scores_equal["ROC", "Cutoff", "RF", , ])
-    scores_ROC_RF <- na.exclude(scores_ROC_RF)
-    th_RF <- mean(scores_ROC_RF) / 10
-    th_RF
-    write.table(th_RF, paste0("./outputs/",especie, "_", "scores_ROC_RF_.csv"))
+    try({ 
+      ##Scores GBM
+      scores_ROC_GBM <-
+        as.numeric(scores_equal["ROC", "Cutoff", "GBM", , ])
+      scores_ROC_GBM[scores_ROC_GBM=="-Inf"]<-NA
+      scores_ROC_GBM
+      scores_ROC_GBM <- as.numeric(na.exclude(scores_ROC_GBM))
+      th_GBM <- mean(scores_ROC_GBM) / 10
+      th_GBM
+      write.table(th_GBM, paste0("./outputs/",especie, "_", "scores_ROC_GBM_.csv"))
+    })
+    try({ 
+      ##Scores CTA
+      scores_ROC_CTA <-
+        as.numeric(scores_equal["ROC", "Cutoff", "CTA", , ])
+      scores_ROC_CTA[scores_ROC_CTA=="-Inf"]<-NA
+      scores_ROC_CTA <- na.exclude(scores_ROC_CTA)
+      th_CTA <- mean(scores_ROC_CTA) / 10
+      th_CTA
+      write.table(th_CTA, paste0("./outputs/",especie, "_", "scores_ROC_CTA_.csv"))
+    })
+    try({ 
+      ##Scores RF
+      scores_ROC_RF <-
+        as.numeric(scores_equal["ROC", "Cutoff", "RF", , ])
+      scores_ROC_RF <- na.exclude(scores_ROC_RF)
+      scores_ROC_RF[scores_ROC_RF=="-Inf"]<-NA
+      th_RF <- mean(scores_ROC_RF) / 10
+      th_RF
+      write.table(th_RF, paste0("./outputs/",especie, "_", "scores_ROC_RF_.csv"))
+    })
     
     ## Evaluation Scores of the  Projections with PA.10000
     (scores_10000 <- get_evaluations(sppModelOut.PA.10000))
     scores_ROC_10000 <-
       as.numeric(scores_10000["ROC", "Cutoff", , , ])
+    scores_ROC_10000[scores_ROC_10000=='-Inf']<-NA
     write.table(scores_ROC_10000, paste0("./outputs/",especie, "_", "scores_10000_.csv"))
-    ##Scores GLM
-    scores_ROC_GLM <-
-      as.numeric(scores_10000["ROC", "Cutoff", "GLM", , ])
-    scores_ROC_GLM <- na.exclude(scores_ROC_GLM)
-    th_GLM <- mean(scores_ROC_GLM) / 10
-    th_GLM
-    write.table(th_GLM, paste0("./outputs/",especie, "_", "scores_ROC_GLM_.csv"))
     
-    ##Scores GAM
-    scores_ROC_GAM <-
-      as.numeric(scores_10000["ROC", "Cutoff", "GAM", , ])
-    scores_ROC_GAM <- na.exclude(scores_ROC_GAM)
-    th_GAM <- mean(scores_ROC_GAM) / 10
-    th_GAM
-    write.table(th_GAM, paste0("./outputs/",especie, "_", "scores_ROC_GAM_.csv"))
     
-    ##Scores ANN
-    scores_ROC_ANN <-
-      as.numeric(scores_10000["ROC", "Cutoff", "ANN", , ])
-    scores_ROC_ANN <- na.exclude(scores_ROC_ANN)
-    th_ANN <- mean(scores_ROC_ANN) / 10
-    th_ANN
-    write.table(th_ANN, paste0("./outputs/",especie, "_", "scores_ROC_ANN_.csv"))
-    
+    try({ 
+      ##Scores GLM
+      scores_ROC_GLM <-
+        as.numeric(scores_10000["ROC", "Cutoff", "GLM", , ])
+      scores_ROC_GLM[scores_ROC_GLM=="-Inf"]<-NA
+      scores_ROC_GLM <- na.exclude(scores_ROC_GLM)
+      th_GLM <- mean(scores_ROC_GLM) / 10
+      th_GLM
+      write.table(th_GLM, paste0("./outputs/",especie, "_", "scores_ROC_GLM_.csv"))
+    })
+    try({ 
+      ##Scores GAM
+      scores_ROC_GAM <-
+        as.numeric(scores_10000["ROC", "Cutoff", "GAM", , ])
+      scores_ROC_GAM[scores_ROC_GAM=="-Inf"]<-NA
+      scores_ROC_GAM <- na.exclude(scores_ROC_GAM)
+      th_GAM <- mean(scores_ROC_GAM) / 10
+      th_GAM
+      write.table(th_GAM, paste0("./outputs/",especie, "_", "scores_ROC_GAM_.csv"))
+    })
+    try({ 
+      ##Scores ANN
+      scores_ROC_ANN <-
+        as.numeric(scores_10000["ROC", "Cutoff", "ANN", , ])
+      scores_ROC_ANN[scores_ROC_ANN=="-Inf"]<-NA
+      scores_ROC_ANN <- na.exclude(scores_ROC_ANN)
+      th_ANN <- mean(scores_ROC_ANN) / 10
+      th_ANN
+      write.table(th_ANN, paste0("./outputs/",especie, "_", "scores_ROC_ANN_.csv"))
+    })
     # ##Scores SRE
     # scores_ROC_SRE <-
     #   as.numeric(scores_10000["ROC", "Cutoff", "SRE", , ])
+    # scores_ROC_SRE[scores_ROC_SRE=="-Inf"]<-NA
     # scores_ROC_SRE <- na.exclude(scores_ROC_SRE)
     # th_SRE <- mean(scores_ROC_SRE) / 10
     # th_SRE
     # write.table(th_SRE, paste0("./outputs/",especie, "_", "scores_ROC_SRE_.csv"))
-    
-    ##Scores FDA
-    scores_ROC_FDA <-
-      as.numeric(scores_10000["ROC", "Cutoff", "FDA", , ])
-    scores_ROC_FDA <- na.exclude(scores_ROC_FDA)
-    th_FDA <- mean(scores_ROC_FDA) / 10
-    th_FDA
-    write.table(th_FDA, paste0("./outputs/",especie, "_", "scores_ROC_FDA_.csv"))
-    
-    ##Scores MARS
-    scores_ROC_MARS <-
-      as.numeric(scores_10000["ROC", "Cutoff", "MARS", , ])
-    scores_ROC_MARS <- na.exclude(scores_ROC_MARS)
-    th_MARS <- mean(scores_ROC_MARS) / 10
-    th_MARS
-    write.table(th_MARS, paste0("./outputs/",especie, "_", "scores_ROC_MARS_.csv"))
-    
-    ##Scores MAXENT.Phillips
-    scores_ROC_MAXENT.Phillips <-
-      as.numeric(scores_10000["ROC", "Cutoff", "MAXENT.Phillips", , ])
-    scores_ROC_MAXENT.Phillips <-
-      na.exclude(scores_ROC_MAXENT.Phillips)
-    th_MAXENT.Phillips <-
-      mean(scores_ROC_MAXENT.Phillips) / 10
-    th_MAXENT.Phillips
-    write.table(th_MAXENT.Phillips, paste0("./outputs/",especie, "_", "scores_ROC_MAXENT.Phillips_.csv"))
-    
+    try({ 
+      ##Scores FDA
+      scores_ROC_FDA <-
+        as.numeric(scores_10000["ROC", "Cutoff", "FDA", , ])
+      scores_ROC_FDA[scores_ROC_FDA=="-Inf"]<-NA
+      scores_ROC_FDA <- na.exclude(scores_ROC_FDA)
+      th_FDA <- mean(scores_ROC_FDA) / 10
+      th_FDA
+      write.table(th_FDA, paste0("./outputs/",especie, "_", "scores_ROC_FDA_.csv"))
+    })
+    try({ 
+      ##Scores MARS
+      scores_ROC_MARS <-
+        as.numeric(scores_10000["ROC", "Cutoff", "MARS", , ])
+      scores_ROC_MARS[scores_ROC_MARS=="-Inf"]<-NA
+      scores_ROC_MARS <- na.exclude(scores_ROC_MARS)
+      th_MARS <- mean(scores_ROC_MARS) / 10
+      th_MARS
+      write.table(th_MARS, paste0("./outputs/",especie, "_", "scores_ROC_MARS_.csv"))
+    })
+    try({ 
+      ##Scores MAXENT.Phillips
+      scores_ROC_MAXENT.Phillips <-
+        as.numeric(scores_10000["ROC", "Cutoff", "MAXENT.Phillips", , ])
+      scores_ROC_MAXENT.Phillips[scores_ROC_MAXENT.Phillips=="-Inf"]<-NA
+      scores_ROC_MAXENT.Phillips <-
+        na.exclude(scores_ROC_MAXENT.Phillips)
+      th_MAXENT.Phillips <-
+        mean(scores_ROC_MAXENT.Phillips) / 10
+      th_MAXENT.Phillips
+      write.table(th_MAXENT.Phillips, paste0("./outputs/",especie, "_", "scores_ROC_MAXENT.Phillips_.csv"))
+    })
     #Scores mean
-    th_mean<-mean(c(scores_ROC_10000,scores_ROC_equal), na.rm=T)/10
+    (th_mean<-mean(c(scores_ROC_10000,scores_ROC_equal), na.rm=T)/10)
     write.table(th_mean, paste0("./outputs/",especie, "_", "scores_ROC_mean.csv"))
 #-------------------------------------------------------#
 # Binary models by each algorithm (Current Climate) ####
@@ -906,7 +967,7 @@ foreach(especie = especies,
           bio50.85_CC
           bio50.85_CC <- stack(bio50.85_CC)
           # bio50.85_CC<-rescale(bio50.85_CC)
-         environment50.85_CC <- bio50.85_CC
+         environment50.85_CC <- rescale(bio50.85_CC)
          names(environment50.85_CC) #Atenção a esta sequência!
           
 
@@ -918,7 +979,7 @@ foreach(especie = especies,
                        full.names = TRUE)
           bio50.85_CM
           bio50.85_CM <- stack(bio50.85_CM)
-          environment50.85_CM <- bio50.85_CM
+          environment50.85_CM <- rescale(bio50.85_CM)
           names(environment50.85_CM) #Atenção a esta sequência!
 
 
@@ -930,7 +991,7 @@ foreach(especie = especies,
                        full.names = TRUE)
           bio50.85_CS
           bio50.85_CS <- stack(bio50.85_CS)
-          environment50.85_CS <- bio50.85_CS
+          environment50.85_CS <- rescale(bio50.85_CS)
           names(environment50.85_CS) #Atenção a esta sequência!
 
 
@@ -942,7 +1003,7 @@ foreach(especie = especies,
                        full.names = TRUE)
           bio50.85_GF
           bio50.85_GF <- stack(bio50.85_GF)
-          environment50.85_GF <- bio50.85_GF
+          environment50.85_GF <- rescale(bio50.85_GF)
           names(environment50.85_GF) #Atenção a esta sequência!
 
 
@@ -954,23 +1015,11 @@ foreach(especie = especies,
                        full.names = TRUE)
           bio50.85_HG
           bio50.85_HG <- stack(bio50.85_HG)
-          environment50.85_HG <- bio50.85_HG
+          environment50.85_HG <-rescale(bio50.85_HG)
           names(environment50.85_HG) #Atenção a esta sequência!
 
 
-          ###GCM 6: MIROC5
-
-          bio50.85_MC <-
-            list.files("./outputs/env/PCA_future/MIROC5",
-                       pattern = ".tif$",
-                       full.names = TRUE)
-          bio50.85_MC
-          bio50.85_MC <- stack(bio50.85_MC)
-          environment50.85_MC <- bio50.85_MC
-          names(environment50.85_MC) #Atenção a esta sequência!
-
-
-          #GCM 7: MIROC-ESM
+          #GCM 6: MIROC-ESM
 
           bio50.85_MR <-
             list.files("./outputs/env/PCA_future/MIROC_ESM",
@@ -978,7 +1027,7 @@ foreach(especie = especies,
                        full.names = TRUE)
           bio50.85_MR
           bio50.85_MR <- stack(bio50.85_MR)
-          environment50.85_MR <- bio50.85_MR
+          environment50.85_MR <- rescale(bio50.85_MR)
           names(environment50.85_MR) #Atenção a esta sequência!
 
           
@@ -996,7 +1045,6 @@ foreach(especie = especies,
             environment50.85_CS,
             environment50.85_GF,
             environment50.85_HG,
-            environment50.85_MC,
             environment50.85_MR
           )
           
@@ -1006,23 +1054,20 @@ foreach(especie = especies,
             "env50.85_CS",
             "env50.85_GF",
             "env50.85_HG",
-            "env50.85_MC",
             "env50.85_MR"
           )
-          
-          
           spp.projections.2050.rcp85_1_CC <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.equal,
             new.env = environment50.85_CC,
             proj.name = "2050.rcp85_1_CC",
-            selected.models = "all",
+            selected.models = proj.select1,
             output.format = ".grd"
           )
           spp.projections.2050.rcp85_2_CC <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.10000,
             new.env = environment50.85_CC,
             proj.name = "2050.rcp85_2_CC",
-            selected.models = "all",
+            selected.models = proj.select2,
             output.format = ".grd"
           )
           
@@ -1030,92 +1075,77 @@ foreach(especie = especies,
             modeling.output = sppModelOut.PA.equal,
             new.env = environment50.85_CM,
             proj.name = "2050.rcp85_1_CM",
-            selected.models = "all",
+            selected.models = proj.select1,
             output.format = ".grd"
           )
           spp.projections.2050.rcp85_2_CM <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.10000,
             new.env = environment50.85_CM,
             proj.name = "2050.rcp85_2_CM",
-            selected.models = "all",
+            selected.models = proj.select2,
             output.format = ".grd"
           )
-
+          
           spp.projections.2050.rcp85_1_CS <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.equal,
             new.env = environment50.85_CS,
             proj.name = "2050.rcp85_1_CS",
-            selected.models = "all",
+            selected.models = proj.select1,
             output.format = ".grd"
           )
           spp.projections.2050.rcp85_2_CS <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.10000,
             new.env = environment50.85_CS,
             proj.name = "2050.rcp85_2_CS",
-            selected.models = "all",
+            selected.models = proj.select2,
             output.format = ".grd"
           )
-
+          
           spp.projections.2050.rcp85_1_GF <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.equal,
             new.env = environment50.85_GF,
             proj.name = "2050.rcp85_1_GF",
-            selected.models = "all",
+            selected.models = proj.select1,
             output.format = ".grd"
           )
           spp.projections.2050.rcp85_2_GF <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.10000,
             new.env = environment50.85_GF,
             proj.name = "2050.rcp85_2_GF",
-            selected.models = "all",
+            selected.models = proj.select2,
             output.format = ".grd"
           )
-
+          
           spp.projections.2050.rcp85_1_HG <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.equal,
             new.env = environment50.85_HG,
             proj.name = "2050.rcp85_1_HG",
-            selected.models = "all",
+            selected.models = proj.select1,
             output.format = ".grd"
           )
           spp.projections.2050.rcp85_2_HG <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.10000,
             new.env = environment50.85_HG,
             proj.name = "2050.rcp85_2_HG",
-            selected.models = "all",
+            selected.models = proj.select2,
             output.format = ".grd"
           )
-
-          spp.projections.2050.rcp85_1_MC <- BIOMOD_Projection(
-            modeling.output = sppModelOut.PA.equal,
-            new.env = environment50.85_MC,
-            proj.name = "2050.rcp85_1_MC",
-            selected.models = "all",
-            output.format = ".grd"
-          )
-          spp.projections.2050.rcp85_2_MC <- BIOMOD_Projection(
-            modeling.output = sppModelOut.PA.10000,
-            new.env = environment50.85_MC,
-            proj.name = "2050.rcp85_2_MC",
-            selected.models = "all",
-            output.format = ".grd"
-          )
-
+          
           spp.projections.2050.rcp85_1_MR <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.equal,
             new.env = environment50.85_MR,
             proj.name = "2050.rcp85_1_MR",
-            selected.models = "all",
+            selected.models = proj.select1,
             output.format = ".grd"
           )
           spp.projections.2050.rcp85_2_MR <- BIOMOD_Projection(
             modeling.output = sppModelOut.PA.10000,
             new.env = environment50.85_MR,
             proj.name = "2050.rcp85_2_MR",
-            selected.models = "all",
+            selected.models = proj.select2,
             output.format = ".grd"
           )
-
+          
           
 #-----------------------#          
 # Stack projections ####
@@ -1131,7 +1161,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_1_CC <-
-            subset(projections.2050.rcp85_1_CC, c(names(projections_1)))
+            subset(projections.2050.rcp85_1_CC, c(names(projections.1)))
           names(projections.2050.rcp85_1_CC)
          
            projections.2050.rcp85_2_CC <-
@@ -1145,7 +1175,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_2_CC <-
-             subset(projections.2050.rcp85_2_CC, c(names(projections_2)))
+             subset(projections.2050.rcp85_2_CC, c(names(projections.2)))
           names(projections.2050.rcp85_2_CC)
 
           projections.2050.rcp85_1_CM <-
@@ -1159,7 +1189,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_1_CM <-
-            subset(projections.2050.rcp85_1_CM, c(names(projections_1)))
+            subset(projections.2050.rcp85_1_CM, c(names(projections.1)))
           names(projections.2050.rcp85_1_CM)
           projections.2050.rcp85_2_CM <-
             stack(
@@ -1172,7 +1202,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_2_CM <-
-            subset(projections.2050.rcp85_2_CM, c(names(projections_2)))
+            subset(projections.2050.rcp85_2_CM, c(names(projections.2)))
           names(projections.2050.rcp85_2_CM)
 
           projections.2050.rcp85_1_CS <-
@@ -1186,7 +1216,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_1_CS <-
-            subset(projections.2050.rcp85_1_CS, c(names(projections_1)))
+            subset(projections.2050.rcp85_1_CS, c(names(projections.1)))
           names(projections.2050.rcp85_1_CS)
           projections.2050.rcp85_2_CS <-
             stack(
@@ -1199,7 +1229,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_2_CS <-
-            subset(projections.2050.rcp85_2_CS, c(names(projections_2)))
+            subset(projections.2050.rcp85_2_CS, c(names(projections.2)))
           names(projections.2050.rcp85_2_CS)
           
 
@@ -1214,7 +1244,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_1_GF <-
-            subset(projections.2050.rcp85_1_GF, c(names(projections_1)))
+            subset(projections.2050.rcp85_1_GF, c(names(projections.1)))
           names(projections.2050.rcp85_1_GF)
           projections.2050.rcp85_2_GF <-
             stack(
@@ -1227,7 +1257,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_2_GF <-
-            subset(projections.2050.rcp85_2_GF, c(names(projections_2)))
+            subset(projections.2050.rcp85_2_GF, c(names(projections.2)))
           names(projections.2050.rcp85_2_GF)
 
           projections.2050.rcp85_1_HG <-
@@ -1241,7 +1271,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_1_HG <-
-            subset(projections.2050.rcp85_1_HG, c(names(projections_1)))
+            subset(projections.2050.rcp85_1_HG, c(names(projections.1)))
           names(projections.2050.rcp85_1_HG)
           projections.2050.rcp85_2_HG <-
             stack(
@@ -1254,7 +1284,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_2_HG <-
-            subset(projections.2050.rcp85_2_HG, c(names(projections_2)))
+            subset(projections.2050.rcp85_2_HG, c(names(projections.2)))
           names(projections.2050.rcp85_2_HG)
 
           projections.2050.rcp85_1_MC <-
@@ -1268,7 +1298,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_1_MC <-
-            subset(projections.2050.rcp85_1_MC, c(names(projections_1)))
+            subset(projections.2050.rcp85_1_MC, c(names(projections.1)))
           names(projections.2050.rcp85_1_MC)
           projections.2050.rcp85_2_MC <-
             stack(
@@ -1281,7 +1311,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_2_MC <-
-            subset(projections.2050.rcp85_2_MC, c(names(projections_2)))
+            subset(projections.2050.rcp85_2_MC, c(names(projections.2)))
           names(projections.2050.rcp85_2_MC)
 
           projections.2050.rcp85_1_MR <-
@@ -1295,7 +1325,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_1_MR <-
-            subset(projections.2050.rcp85_1_MR, c(names(projections_1)))
+            subset(projections.2050.rcp85_1_MR, c(names(projections.1)))
           names(projections.2050.rcp85_1_MR)
           projections.2050.rcp85_2_MR <-
             stack(
@@ -1308,7 +1338,7 @@ foreach(especie = especies,
               )
             )
           projections.2050.rcp85_2_MR <-
-            subset(projections.2050.rcp85_2_MR, c(names(projections_2)))
+            subset(projections.2050.rcp85_2_MR, c(names(projections.2)))
           names(projections.2050.rcp85_2_MR)
           
           projections.all.ft1 <- stack(
@@ -1317,7 +1347,6 @@ foreach(especie = especies,
             projections.2050.rcp85_1_CS,
             projections.2050.rcp85_1_GF,
             projections.2050.rcp85_1_HG,
-            projections.2050.rcp85_1_MC,
             projections.2050.rcp85_1_MR
           )
           
@@ -1328,7 +1357,6 @@ foreach(especie = especies,
             projections.2050.rcp85_2_CS,
             projections.2050.rcp85_2_GF,
             projections.2050.rcp85_2_HG,
-            projections.2050.rcp85_2_MC,
             projections.2050.rcp85_2_MR
           )
 #------------------------------------------------#          
