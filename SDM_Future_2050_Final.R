@@ -960,7 +960,7 @@ foreach(especie = especies,
           ###GCM 1: CCSM4
           
           bio50.85_CC <-
-            list.files("./outputs/env/PCA_future/CCSM4",
+            list.files("./env/PCA_future/CCSM4",
                        pattern = ".tif$",
                        full.names = TRUE
             )
@@ -974,7 +974,7 @@ foreach(especie = especies,
           ###GCM 2: CMCC_CM
 
           bio50.85_CM <-
-            list.files("./outputs/env/PCA_future/CMCC",
+            list.files("./env/PCA_future/CMCC",
                        pattern = ".tif$",
                        full.names = TRUE)
           bio50.85_CM
@@ -986,7 +986,7 @@ foreach(especie = especies,
           ###GCM 3: CSIRO_Mk3
 
           bio50.85_CS <-
-            list.files("./outputs/env/PCA_future/CSIRO",
+            list.files("./env/PCA_future/CSIRO",
                        pattern = ".tif$",
                        full.names = TRUE)
           bio50.85_CS
@@ -998,7 +998,7 @@ foreach(especie = especies,
           ###GCM 4: GFDL_CM3
 
           bio50.85_GF <-
-            list.files("./outputs/env/PCA_future/GFDL",
+            list.files("./env/PCA_future/GFDL",
                        pattern = ".tif$",
                        full.names = TRUE)
           bio50.85_GF
@@ -1010,7 +1010,7 @@ foreach(especie = especies,
           #GCM 5: HadGEM2
 
           bio50.85_HG <-
-            list.files("./outputs/env/PCA_future/CCSM4",
+            list.files("./env/PCA_future/CCSM4",
                        pattern = ".tif$",
                        full.names = TRUE)
           bio50.85_HG
@@ -1022,7 +1022,7 @@ foreach(especie = especies,
           #GCM 6: MIROC-ESM
 
           bio50.85_MR <-
-            list.files("./outputs/env/PCA_future/MIROC_ESM",
+            list.files("./env/PCA_future/MIROC_ESM",
                        pattern = ".tif$",
                        full.names = TRUE)
           bio50.85_MR
